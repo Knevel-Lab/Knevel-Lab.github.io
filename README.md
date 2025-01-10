@@ -1,77 +1,107 @@
-# Academic Pages
-**Academic Pages is a Github Pages template for academic websites.**
+# Knevel Lab Pages Repository
 
-![Academic Pages template example](images/homepage.png "Academic Pages template example")
+Website can be found at https://knevel-lab.github.io/
 
-# Getting Started
+## Guide to maintaining and updating
 
-1. Register a GitHub account if you don't have one and confirm your e-mail (required!)
-1. Click the "Use this template" button in the top right.
-1. On the "New repository" page, enter your repository name as "[your GitHub username].github.io", which will also be your website's URL.
-1. Set site-wide configuration and add your content.
-1. Upload any files (like PDFs, .zip files, etc.) to the `files/` directory. They will appear at https://[your GitHub username].github.io/files/example.pdf.
-1. Check status by going to the repository settings, in the "GitHub pages" section
-1. (Optional) Use the Jupyter notebooks or python scripts in the `markdown_generator` folder to generate markdown files for publications and talks from a TSV file.
+### Group tab
 
-See more info at https://academicpages.github.io/
+Per individual the following information should be entered into the ~/_pages/group.html document:
 
-## Running locally
+* Square profile picture in .jpg format
+* Small biography
+* LinkedIn profile link
+* GitHub profile link
+* PubMed author search
+* OrcID
 
-When you are initially working your website, it is very useful to be able to preview the changes locally before pushing them to GitHub. To work locally you will need to:
+See below for template block: 
 
-1. Clone the repository and made updates as detailed above.
-1. Make sure you have ruby-dev, bundler, and nodejs installed
-    
-    On most Linux distribution and [Windows Subsystem Linux](https://learn.microsoft.com/en-us/windows/wsl/about) the command is:
-    ```bash
-    sudo apt install ruby-dev ruby-bundler nodejs
-    ```
-    On MacOS the commands are:
-    ```bash
-    brew install ruby
-    brew install node
-    gem install bundler
-    ```
-1. Run `bundle install` to install ruby dependencies. If you get errors, delete Gemfile.lock and try again.
-1. Run `jekyll serve -l -H localhost` to generate the HTML and serve it from `localhost:4000` the local server will automatically rebuild and refresh the pages on change.
+	<div style="height: 150px;">
+	<img src="/images/Marc.jpg" alt="Marc Maurits" class="biopic">
+	<h2>Marc Maurits</h2>
+	PhD Candidate, pseudo-bioinformatician, expert in the field of being really picky and annoying about research, also website developer/maintainer
+	<br>
+	<a href="www.linkedin.com/in/marc-maurits-711889115"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i> LinkedIn</a>
+	<a href="https://github.com/MarcMaurits"><i class="fab fa-fw fa-github" aria-hidden="true"></i> Github</a>
+	<a href="https://pubmed.ncbi.nlm.nih.gov/?term=Maurits+MP%5BAuthor%5D&sort=date"><i class="ai ai-pubmed-square ai-fw"></i> PubMed</a>
+	<a href="https://orcid.org/0000-0002-3266-6232"><i class="ai ai-orcid-square ai-fw"></i> ORCID</a>
+	</div>
+	<hr>
 
-If you are running on Linux it may be necessary to install some additional dependencies prior to being able to run locally: `sudo apt install build-essential gcc make`
+N.B. The &lt;hr&gt; could be omitted for the last entry.
 
-## Using Docker
+### Publications Tab
 
-Working from a different OS, or just want to avoid installing dependencies? You can use the provided `Dockerfile` to build a container that will run the site for you if you have [Docker](https://www.docker.com/) installed.
+Per publication the following information should be entered into the ~/markdown_generator/publications.tsv document:
 
-Start by build the container:
+* Publication date
+* Title
+* Journal
+* Short summary
+* Short citation of the format Author, 1st. (Year) "title" &lt;i&gt;Journal&lt;/i&gt;
+* Short name for paper
+* Link to paper
 
-```bash
-docker build -t jekyll-site .
-```
+See below for example entry:
 
-Next, run the container:
-```bash
-docker run -p 4000:4000 --rm -v $(pwd):/usr/src/app jekyll-site
-```
+| pub_date   | title                                                                                             | venue                          | excerpt            | citation                                                                                                                                                        | url_slug | paper_url                                                |
+|------------|---------------------------------------------------------------------------------------------------|--------------------------------|--------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|----------|----------------------------------------------------------|
+| 2020-05-27 | Using genetics to prioritize diagnoses for rheumatology outpatients with   inflammatory arthritis | Science Translational Medicine | short summary here | Knevel, R. (2020). "Using genetics to prioritize diagnoses for   rheumatology outpatients with inflammatory arthritis" <i>Science   Translational Medicine</i>. | gprob    | https://www.science.org/doi/10.1126/scitranslmed.aay1548 |
 
-# Maintenance
+The easiest way to alter the .tsv file is using a text editor that can visualise tabs (such as Notepad++)
 
-Bug reports and feature requests to the template should be [submitted via GitHub](https://github.com/academicpages/academicpages.github.io/issues/new/choose). For questions concerning how to style the template, please feel free to start a [new discussion on GitHub](https://github.com/academicpages/academicpages.github.io/discussions).
+N.B. avoid any symbols in the short summary as UTF-8 encoding will be enforced! (I use Notepad++ to convert to ANSI)
 
-This repository was forked (then detached) by [Stuart Geiger](https://github.com/staeiou) from the [Minimal Mistakes Jekyll Theme](https://mmistakes.github.io/minimal-mistakes/), which is © 2016 Michael Rose and released under the MIT License (see LICENSE.md). It is currently being maintained by [Robert Zupko](https://github.com/rjzupkoii) and additional maintainers would be welcomed.
+After altering the publications.tsv one should run the ~/markdown_generator/publications.py script to convert the new information to a proper entry.
 
-## Bugfixes and enhancements
+### Talks Tab
 
-If you have bugfixes and enhancements that you would like to submit as a pull request, you will need to [fork](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo) this repository as opposed to using it as a template. This will also allow you to [synchronize your copy](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/syncing-a-fork) of template to your fork as well.
+Per talk the following information should be entered into the ~/markdown_generator/talks.tsv document:
 
-Unfortunately, one logistical issue with a template theme like Academic Pages that makes it a little tricky to get bug fixes and updates to the core theme. If you use this template and customize it, you will probably get merge conflicts if you attempt to synchronize. If you want to save your various .yml configuration files and markdown files, you can delete the repository and fork it again. Or you can manually patch.
+* Title
+* Type of talk (oral/poster/postertour)
+* Short name for talk
+* Venue (e.g. EULAR 20xx)
+* Date
+* Location
+* Link to talk
+* Short summary
 
----
-<div align="center">
-    
-![pages-build-deployment](https://github.com/academicpages/academicpages.github.io/actions/workflows/pages/pages-build-deployment/badge.svg)
-[![GitHub contributors](https://img.shields.io/github/contributors/academicpages/academicpages.github.io.svg)](https://github.com/academicpages/academicpages.github.io/graphs/contributors)
-[![GitHub release](https://img.shields.io/github/v/release/academicpages/academicpages.github.io)](https://github.com/academicpages/academicpages.github.io/releases/latest)
-[![GitHub license](https://img.shields.io/github/license/academicpages/academicpages.github.io?color=blue)](https://github.com/academicpages/academicpages.github.io/blob/master/LICENSE)
+See below for example entry:
 
-[![GitHub stars](https://img.shields.io/github/stars/academicpages/academicpages.github.io)](https://github.com/academicpages/academicpages.github.io)
-[![GitHub forks](https://img.shields.io/github/forks/academicpages/academicpages.github.io)](https://github.com/academicpages/academicpages.github.io/fork)
-</div>
+| title                              | type | url_slug | venue      | date       | location            | talk_url              | description                                                                                                                                 |
+|------------------------------------|------|----------|------------|------------|---------------------|-----------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
+| EULAR 2022 Abstract EHR Clustering | Talk | talk-1   | EULAR 2022 | 01/06/2022 | Copenhagen, Denmark | http://exampleurl.com | Poster presentation of the work performed by Tjardo Maarseveen on the   clustering of Rheumatoid Arthritis patients using baseline EHR data |
+
+The easiest way to alter the .tsv file is using a text editor that can visualise tabs (such as Notepad++)
+
+N.B. avoid any symbols in the short summary as UTF-8 encoding will be enforced! (I use Notepad++ to convert to ANSI)
+
+After altering the talks.tsv one should run the ~/markdown_generator/talks.py script to convert the new information to a proper entry.
+
+### Applications Tab
+
+Per application the following information should be entered into ~/_pages/applications.html document:
+
+* Title
+* Link to GitHub
+* Square thumbnail in .jpg format
+* Short description
+* Developer name
+
+See below for template block: 
+
+	<h4>Dx Extraction</h4>
+
+	<div style="height: 200px;">
+	<a href="https://github.com/levrex/DiagnosisExtraction_ML">
+	<img src="/images/DxE_img.jpg" alt="Dx Extraction" class="applink">
+	</a>
+	<p>Pipeline for the extraction of diagnoses from free-written text fields in electronic health records.</p>
+	<p>Developed by TD Maarseveen</p>
+	</div>
+	<hr>
+
+N.B. The &lt;hr&gt; could be omitted for the last entry.
+
