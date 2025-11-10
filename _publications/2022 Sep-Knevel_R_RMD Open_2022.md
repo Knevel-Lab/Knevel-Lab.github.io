@@ -1,0 +1,16 @@
+---
+title: "E-health as a sine qua non for modern healthcare"
+collection: publications
+permalink: /publication/2022 Sep-Knevel_R_RMD Open_2022
+excerpt: "In each era we need to balance between being able to provide care with our &quot;technical skill, scientific knowledge, and human understanding&quot; (Harrison's Principles of Internal Medicine, 1950) to the individual patient and simultaneously ensure that our healthcare serves all. With the increasing demand of healthcare by an aging population and the lack of specialists, accessible healthcare within a reasonable time frame is not always guaranteed. E-health provides solutions for current situations where we do not meet our own aims of good healthcare, such as restrictions in access to care and a reduction in care availability by a reducing workforce. In addition, telemedicine offers opportunities to improve our healthcare beyond what is possible by in person visits. However, e-health is often viewed as an deficient version of healthcare of low quality. We disagree with this view. In this article we will discuss how to position e-health in the current situation of healthcare, given the continuing rapid development of digital technologies and the changing needs of healthcare professionals and patients. We will address the evolution of e-health towards connected and intelligent systems and the stakeholders perspective, aiming to open up the discussion on e-Health."
+date: 2022 Sep
+venue: "RMD Open"
+paperurl: "https://doi.org/10.1136/rmdopen-2022-002401"
+citation: "Knevel R, H&uuml;gle T. (2022) &quot;E-health as a sine qua non for modern healthcare&quot; <i>RMD Open. 2022 Sep;8(2):e002401. doi: 10.1136/rmdopen-2022-002401.</i>"
+---
+
+<a href='https://doi.org/10.1136/rmdopen-2022-002401'>Download paper here</a>
+
+In each era we need to balance between being able to provide care with our &quot;technical skill, scientific knowledge, and human understanding&quot; (Harrison's Principles of Internal Medicine, 1950) to the individual patient and simultaneously ensure that our healthcare serves all. With the increasing demand of healthcare by an aging population and the lack of specialists, accessible healthcare within a reasonable time frame is not always guaranteed. E-health provides solutions for current situations where we do not meet our own aims of good healthcare, such as restrictions in access to care and a reduction in care availability by a reducing workforce. In addition, telemedicine offers opportunities to improve our healthcare beyond what is possible by in person visits. However, e-health is often viewed as an deficient version of healthcare of low quality. We disagree with this view. In this article we will discuss how to position e-health in the current situation of healthcare, given the continuing rapid development of digital technologies and the changing needs of healthcare professionals and patients. We will address the evolution of e-health towards connected and intelligent systems and the stakeholders perspective, aiming to open up the discussion on e-Health.
+
+Recommended citation: Knevel R, H&uuml;gle T. (2022) &quot;E-health as a sine qua non for modern healthcare&quot; <i>RMD Open. 2022 Sep;8(2):e002401. doi: 10.1136/rmdopen-2022-002401.</i>

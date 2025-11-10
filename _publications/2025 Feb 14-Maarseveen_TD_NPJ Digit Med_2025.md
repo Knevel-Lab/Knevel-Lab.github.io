@@ -1,0 +1,16 @@
+---
+title: "Improving musculoskeletal care with AI enhanced triage through data driven screening of referral letters"
+collection: publications
+permalink: /publication/2025 Feb 14-Maarseveen_TD_NPJ Digit Med_2025
+excerpt: "Musculoskeletal complaints account for 30% of GP consultations, with many referred to rheumatology clinics via letters. This study developed a Machine Learning (ML) pipeline to prioritize referrals by identifying rheumatoid arthritis (RA), osteoarthritis, fibromyalgia, and patients requiring long-term care. Using 8044 referral letters from 5728 patients across 12 clinics, we trained and validated ML models in two large centers and tested their generalizability in the remaining ten. The models were robust, with RA achieving an AUC-ROC of 0.78 (CI: 0.74-0.83), osteoarthritis 0.71 (CI: 0.67-0.74), fibromyalgia 0.81 (CI: 0.77-0.85), and chronic follow-up 0.63 (CI: 0.61-0.66). The RA-classifier outperformed manual referral systems, as it prioritised RA over non-RA cases (P&thinsp;<&thinsp;0.001), while the manual referral system could not differentiate between the two. The other classifiers showed similar prioritisation improvements, highlighting the potential to enhance care efficiency, reduce clinician workload, and facilitate earlier specialized care. Future work will focus on building clinical decision-support tools."
+date: 2025 Feb 14
+venue: "NPJ Digit Med"
+paperurl: "https://doi.org/10.1038/s41746-025-01495-4"
+citation: "Maarseveen TD, Glas HK, Veris-van Dieren J, van den Akker E, Knevel R. (2025) &quot;Improving musculoskeletal care with AI enhanced triage through data driven screening of referral letters&quot; <i>NPJ Digit Med. 2025 Feb 14;8(1):98. doi: 10.1038/s41746-025-01495-4.</i>"
+---
+
+<a href='https://doi.org/10.1038/s41746-025-01495-4'>Download paper here</a>
+
+Musculoskeletal complaints account for 30% of GP consultations, with many referred to rheumatology clinics via letters. This study developed a Machine Learning (ML) pipeline to prioritize referrals by identifying rheumatoid arthritis (RA), osteoarthritis, fibromyalgia, and patients requiring long-term care. Using 8044 referral letters from 5728 patients across 12 clinics, we trained and validated ML models in two large centers and tested their generalizability in the remaining ten. The models were robust, with RA achieving an AUC-ROC of 0.78 (CI: 0.74-0.83), osteoarthritis 0.71 (CI: 0.67-0.74), fibromyalgia 0.81 (CI: 0.77-0.85), and chronic follow-up 0.63 (CI: 0.61-0.66). The RA-classifier outperformed manual referral systems, as it prioritised RA over non-RA cases (P&thinsp;<&thinsp;0.001), while the manual referral system could not differentiate between the two. The other classifiers showed similar prioritisation improvements, highlighting the potential to enhance care efficiency, reduce clinician workload, and facilitate earlier specialized care. Future work will focus on building clinical decision-support tools.
+
+Recommended citation: Maarseveen TD, Glas HK, Veris-van Dieren J, van den Akker E, Knevel R. (2025) &quot;Improving musculoskeletal care with AI enhanced triage through data driven screening of referral letters&quot; <i>NPJ Digit Med. 2025 Feb 14;8(1):98. doi: 10.1038/s41746-025-01495-4.</i>
