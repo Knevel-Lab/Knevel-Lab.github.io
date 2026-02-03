@@ -11,7 +11,7 @@ locale                   : "en-UK"
 title                    : "Knevel Lab"
 title_separator          : "-"
 name                     : &name "Knevel Lab"
-description              : &description "Homepage of the Knevel Lab Medical Informatics Group"
+description              : &description "Homepage of the Knevel Lab Data Science Group"
 url                      : https://knevel-lab.github.io # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
 baseurl                  : "" # the subpath of your site, e.g. "/blog"
 repository               : "Knevel-Lab/Knevel-Lab.github.io"
@@ -24,7 +24,7 @@ author:
   avatar           : "Logo.jpg"
   name             : "Knevel Lab"
   pronouns         :
-  bio              : "Bioinformatics group of the LUMC Rheumatology department"
+  bio              : "Data Science lab of the LUMC Rheumatology department"
   location         : "Leiden, The Netherlands"
   employer         :
   uri              :
