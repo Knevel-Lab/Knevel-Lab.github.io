@@ -1,7 +1,7 @@
 ---
 title: "EULAR 2024 ML Diagnoses"
 collection: talks
-type: "Poster"
+type: "Poster by Tjardo Maarseveen"
 permalink: /talks/2024-06-13-2024_TDM_EULAR_ML_DIAG
 venue: "EULAR 2024"
 date: 2024-06-13
