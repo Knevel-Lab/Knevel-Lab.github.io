@@ -21,7 +21,7 @@ repository               : "Knevel-Lab/Knevel-Lab.github.io"
 #               Additional customization can be done by editing /_includes/author-profile.html
 author:
   # Biographic information
-  avatar           : "Logo.jpg"
+  avatar           : "knevel_lab_logo.png"
   name             : "Knevel Lab"
   pronouns         :
   bio              : "Data Science lab of the LUMC Rheumatology department"
