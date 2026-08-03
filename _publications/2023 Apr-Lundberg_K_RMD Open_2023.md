@@ -1,7 +1,7 @@
 ---
 title: "Population-based user-perceived experience of Rheumatic?: a novel digital symptom-checker in rheumatology"
 collection: publications
-permalink: /publication/2023 Apr-Lundberg_K_RMD Open_2023
+permalink: "/publication/2023 Apr-Lundberg_K_RMD Open_2023"
 excerpt: "Digital symptom-checkers (SCs) have potential to improve rheumatology triage and reduce diagnostic delays. In addition to being accurate, SCs should be user friendly and meet patient's needs. Here, we examined usability and acceptance of Rheumatic?-a new and freely available online SC (currently with >44 000 users)-in a real-world setting."
 date: 2023 Apr
 venue: "RMD Open"

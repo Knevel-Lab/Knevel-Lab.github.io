@@ -23,3 +23,5 @@ markdown_generator/generated_preview/
 .tmp/
 .tmp-ucrt/
 vendor/
+__pycache__/
+markdown_generator/__pycache__/

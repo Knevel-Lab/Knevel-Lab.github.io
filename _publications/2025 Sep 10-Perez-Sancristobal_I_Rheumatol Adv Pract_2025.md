@@ -1,7 +1,7 @@
 ---
 title: "Let's ask the patient: disease prediction based on patients' symptom descriptions in free text"
 collection: publications
-permalink: /publication/2025 Sep 10-Pérez-Sancristobal_I_Rheumatol Adv Pract_2025
+permalink: "/publication/2025 Sep 10-Pérez-Sancristobal_I_Rheumatol Adv Pract_2025"
 excerpt: "This study evaluates the value self-reported free-text symptom descriptions for supporting diagnostic decisions in osteoarthritis (OA), fibromyalgia (FM) and immune-mediated rheumatic diseases (imRD) using natural language processing (NLP) and machine learning (ML)."
 date: 2025 Sep 10
 venue: "Rheumatol Adv Pract"

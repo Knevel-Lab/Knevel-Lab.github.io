@@ -1,7 +1,7 @@
 ---
 title: "New risk model is able to identify patients with a low risk of progression in systemic sclerosis"
 collection: publications
-permalink: /publication/2021 May-van_Leeuwen_NM_RMD Open_2021
+permalink: "/publication/2021 May-van_Leeuwen_NM_RMD Open_2021"
 excerpt: "To develop a prediction model to guide annual assessment of systemic sclerosis (SSc) patients tailored in accordance to disease activity."
 date: 2021 May
 venue: "RMD Open"

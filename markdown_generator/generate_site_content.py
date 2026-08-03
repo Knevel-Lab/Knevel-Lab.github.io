@@ -24,6 +24,7 @@ GENERATOR_DIR = ROOT / "markdown_generator"
 ACTIVITIES_CSV = GENERATOR_DIR / "member_activity_records.csv"
 MEMBERS_CSV = GENERATOR_DIR / "lab_members.csv"
 PREVIEW_DIR = GENERATOR_DIR / "generated_preview"
+BACKUP_DIR = GENERATOR_DIR / "hardcoded_backup"
 
 ACTIVITY_FIELDS = [
     "record_id",
@@ -62,6 +63,8 @@ MEMBER_FIELDS = [
     "pubmed",
     "orcid",
     "google_scholar",
+    "researchgate",
+    "blog",
     "source_file",
 ]
 
@@ -219,11 +222,17 @@ def extract_group_members() -> list[dict[str, str]]:
             "pubmed": "",
             "orcid": "",
             "google_scholar": "",
+            "researchgate": "",
+            "blog": "",
         }
         for href, label in re.findall(r"<a href=\"([^\"]+)\">.*?</i>\s*([^<]+)</a>", chunk, re.S):
             key = label.strip().lower().replace(" ", "_")
             if key == "google_scholar":
                 links["google_scholar"] = href
+            elif key == "researchgate":
+                links["researchgate"] = href
+            elif key == "blog":
+                links["blog"] = href
             elif key in links:
                 links[key] = href
         members.append(
@@ -238,6 +247,8 @@ def extract_group_members() -> list[dict[str, str]]:
                 "pubmed": links["pubmed"],
                 "orcid": links["orcid"],
                 "google_scholar": links["google_scholar"],
+                "researchgate": links["researchgate"],
+                "blog": links["blog"],
                 "source_file": "_pages/group.html",
             }
         )
@@ -417,6 +428,44 @@ def write_tsv(path: Path, rows: list[dict[str, str]], fields: list[str]) -> None
         writer.writerows(rows)
 
 
+def copy_tree_or_file(source: Path, destination: Path) -> None:
+    if source.is_dir():
+        if destination.exists():
+            shutil.rmtree(destination)
+        shutil.copytree(source, destination)
+    elif source.exists():
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source, destination)
+
+
+def backup_hardcoded_site(force: bool = False) -> None:
+    if BACKUP_DIR.exists() and not force:
+        return
+    if BACKUP_DIR.exists():
+        shutil.rmtree(BACKUP_DIR)
+    targets = [
+        ROOT / "_publications",
+        ROOT / "_talks",
+        ROOT / "_pages" / "group.html",
+        ROOT / "_pages" / "awards.html",
+    ]
+    for target in targets:
+        if target.is_dir():
+            copy_tree_or_file(target, BACKUP_DIR / target.name)
+        elif target.exists():
+            copy_tree_or_file(target, BACKUP_DIR / "_pages" / target.name)
+    write_text(
+        BACKUP_DIR / "README.md",
+        "# Hardcoded website backup\n\n"
+        "This directory stores the pre-pipeline hardcoded website content.\n"
+        "It is kept so generated output can be compared or restored manually.\n\n"
+        "Backed up paths:\n\n"
+        "- `_publications/`\n"
+        "- `_talks/`\n"
+        "- `_pages/group.html`\n"
+        "- `_pages/awards.html`\n",
+    )
+
 def read_csv_rows(path: Path) -> list[dict[str, str]]:
     with path.open("r", encoding="utf-8-sig", newline="") as handle:
         return list(csv.DictReader(handle))
@@ -573,6 +622,169 @@ def generate_member_page(member: dict[str, str], activities: list[dict[str, str]
     return filename, "\n".join(lines)
 
 
+def source_filename(row: dict[str, str], collection_dir: str, fallback: str) -> str:
+    source_file = row.get("source_file", "").strip().replace("\\", "/")
+    prefix = f"{collection_dir}/"
+    if source_file.startswith(prefix) and source_file.endswith(".md"):
+        return Path(source_file).name
+    return fallback
+
+
+def member_links_html(member: dict[str, str]) -> str:
+    links = []
+    link_specs = [
+        ("linkedin", "fab fa-fw fa-linkedin", "LinkedIn"),
+        ("github", "fab fa-fw fa-github", "Github"),
+        ("pubmed", "ai ai-pubmed-square ai-fw", "PubMed"),
+        ("orcid", "ai ai-orcid-square ai-fw", "ORCID"),
+        ("google_scholar", "ai ai-google-scholar ai-fw", "Google Scholar"),
+        ("researchgate", "fab fa-fw fa-researchgate", "ResearchGate"),
+        ("blog", "fa fa-code", "Blog"),
+    ]
+    for key, icon_class, label in link_specs:
+        href = member.get(key, "").strip()
+        if href:
+            links.append(f'<a href="{html.escape(href, quote=True)}"><i class="{icon_class}" aria-hidden="true"></i> {label}</a>')
+    return "\n".join(links)
+
+
+def render_member_block(member: dict[str, str]) -> str:
+    name = member.get("name", "").strip()
+    image = member.get("image", "").strip() or "Profile.jpg"
+    bio = member.get("bio", "").strip()
+    links = member_links_html(member)
+    lines = [
+        '<div style="height: 150px;">',
+        f'<img src="/images/{html.escape(image, quote=True)}" alt="{html.escape(name, quote=True)}" class="biopic">',
+        f'<h2>{html.escape(name)}</h2>',
+    ]
+    if bio:
+        lines.append(html.escape(bio))
+    lines.append("<br>")
+    if links:
+        lines.append(links)
+    lines.append("</div>")
+    lines.append("<hr>")
+    return "\n".join(lines)
+
+
+def generate_group_html(members: list[dict[str, str]]) -> str:
+    header = """---
+layout: archive
+title: "Group"
+permalink: /group/
+author_profile: true
+redirect_from: 
+  - /group
+---
+"""
+    sections = [header]
+    for status, heading in [("current", ""), ("affiliated", "Affiliated Members"), ("alumni", "Alumni")]:
+        subset = [member for member in members if member.get("status", "current") == status]
+        if not subset:
+            continue
+        if heading:
+            sections.append(f"\n\n<h3>{heading}</h3>\n")
+        sections.extend(render_member_block(member) for member in subset)
+    return "\n\n".join(sections).rstrip() + "\n"
+
+
+def render_award_block(row: dict[str, str]) -> str:
+    title = row.get("title", "").strip()
+    image = row.get("image", "").strip()
+    description = row.get("abstract_or_description", "").strip()
+    url = row.get("url", "").strip()
+    lines = ['<div style="height: auto;">']
+    if image:
+        lines.append(f'<img src="/images/{html.escape(image, quote=True)}" alt="{html.escape(title, quote=True)}" class="biopic">')
+    lines.append(f'<h2>{html.escape(title)}</h2>')
+    if description:
+        lines.append(html.escape(description))
+    if url:
+        lines.append("<br><br>")
+        lines.append("For more information:<br>")
+        lines.append(f'<a href="{html.escape(url, quote=True)}">{html.escape(url)}</a>')
+    lines.append("</div>")
+    lines.append("<hr>")
+    return "\n".join(lines)
+
+
+def generate_awards_html(awards: list[dict[str, str]]) -> str:
+    header = """---
+layout: archive
+title: "Awards won by members of the Knevel group"
+permalink: /awards/
+author_profile: true
+redirect_from: 
+  - /awards
+---
+"""
+    visible_awards = [row for row in awards if row.get("visibility", "public") == "public"]
+    visible_awards = sorted(visible_awards, key=lambda row: row.get("date") or row.get("year"), reverse=True)
+    return header + "\n" + "\n\n".join(render_award_block(row) for row in visible_awards).rstrip() + "\n"
+
+
+def clear_markdown_dir(path: Path) -> None:
+    path.mkdir(parents=True, exist_ok=True)
+    for item in path.glob("*.md"):
+        item.unlink()
+
+
+def generate_site(force_backup: bool = False) -> None:
+    activities = read_csv_rows(ACTIVITIES_CSV)
+    members = read_csv_rows(MEMBERS_CSV) if MEMBERS_CSV.exists() else []
+    errors = validate(activities)
+    if errors:
+        for error in errors:
+            print(f"ERROR: {error}")
+        raise SystemExit(1)
+
+    backup_hardcoded_site(force=force_backup)
+
+    publications = [r for r in activities if r.get("visibility", "public") == "public" and r.get("record_type") == "publication"]
+    talks = [
+        r
+        for r in activities
+        if r.get("visibility", "public") == "public"
+        and r.get("record_type") in {"talk", "invited_presentation", "public_outreach"}
+    ]
+    awards = [r for r in activities if r.get("visibility", "public") == "public" and r.get("record_type") == "award"]
+
+    clear_markdown_dir(ROOT / "_publications")
+    clear_markdown_dir(ROOT / "_talks")
+
+    for row in publications:
+        filename, content = generate_publication_md(row)
+        write_text(ROOT / "_publications" / source_filename(row, "_publications", filename), content)
+    for row in talks:
+        filename, content = generate_talk_md(row)
+        write_text(ROOT / "_talks" / source_filename(row, "_talks", filename), content)
+
+    write_text(ROOT / "_pages" / "group.html", generate_group_html(members))
+    write_text(ROOT / "_pages" / "awards.html", generate_awards_html(awards))
+    write_tsv(GENERATOR_DIR / "publications.tsv", publications_to_tsv_rows(publications), [
+        "pub_date",
+        "title",
+        "venue",
+        "excerpt",
+        "citation",
+        "url_slug",
+        "paper_url",
+    ])
+    write_tsv(GENERATOR_DIR / "talks.tsv", talks_to_tsv_rows(talks), [
+        "title",
+        "type",
+        "url_slug",
+        "venue",
+        "date",
+        "location",
+        "talk_url",
+        "description",
+    ])
+    print(f"Generated site publications: {len(publications)}")
+    print(f"Generated site talks/presentations/outreach: {len(talks)}")
+    print(f"Generated site awards: {len(awards)}")
+    print(f"Generated group members: {len(members)}")
 def generate_preview() -> None:
     activities = read_csv_rows(ACTIVITIES_CSV)
     members = read_csv_rows(MEMBERS_CSV) if MEMBERS_CSV.exists() else []
@@ -680,6 +892,8 @@ def main(argv: Iterable[str] | None = None) -> None:
     parser.add_argument("--bootstrap-current", action="store_true", help="Create source CSVs from current site files.")
     parser.add_argument("--force", action="store_true", help="Overwrite existing source CSVs during bootstrap.")
     parser.add_argument("--generate-preview", action="store_true", help="Generate preview files from source CSVs.")
+    parser.add_argument("--generate-site", action="store_true", help="Replace site content files from source CSVs after backing up hardcoded files.")
+    parser.add_argument("--force-backup", action="store_true", help="Overwrite markdown_generator/hardcoded_backup during --generate-site.")
     parser.add_argument("--check", action="store_true", help="Validate source CSVs.")
     args = parser.parse_args(argv)
 
@@ -689,7 +903,9 @@ def main(argv: Iterable[str] | None = None) -> None:
         check()
     if args.generate_preview:
         generate_preview()
-    if not (args.bootstrap_current or args.check or args.generate_preview):
+    if args.generate_site:
+        generate_site(force_backup=args.force_backup)
+    if not (args.bootstrap_current or args.check or args.generate_preview or args.generate_site):
         parser.print_help()
 
 

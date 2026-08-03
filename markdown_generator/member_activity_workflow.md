@@ -1,57 +1,77 @@
-# Member activity workflow
+# Member Activity Workflow
 
-This is the first implementation of the member-maintained website data flow.
+This repository now has a CSV-driven pipeline for lab-member activity content.
 
-## Source files
+## Source files edited by lab members
 
-- `lab_members.csv`: lab member metadata extracted from `_pages/group.html`.
-- `member_activity_records.csv`: one row per activity or achievement.
+- `markdown_generator/lab_members.csv`: lab member profile metadata used for the Group page.
+- `markdown_generator/member_activity_records.csv`: one row per publication, talk/presentation/outreach item, or award.
 
-Lab members should eventually edit only their own rows in `member_activity_records.csv`, or a future Excel workbook generated from the same schema.
+Lab members should update these CSV files instead of editing generated website files directly.
 
-## Generated derivatives
+## Generated website files
 
-The current safe command writes only to `generated_preview/`:
-
-```sh
-python markdown_generator/generate_site_content.py --check --generate-preview
-```
-
-Preview outputs include:
-
-- `generated_preview/_publications/*.md`
-- `generated_preview/_talks/*.md`
-- `generated_preview/_members/*.md`
-- `generated_preview/_data/members.json`
-- `generated_preview/_data/member_activities.json`
-- `generated_preview/_data/awards.json`
-- `generated_preview/markdown_generator/publications.tsv`
-- `generated_preview/markdown_generator/talks.tsv`
-
-`generated_preview/` is ignored by Git.
-
-## Rebuilding the initial CSVs
-
-To recreate the CSVs from the current hardcoded site files:
-
-```sh
-python markdown_generator/generate_site_content.py --bootstrap-current --force
-```
-
-This parses:
+The pipeline writes these site files from the CSV sources:
 
 - `_publications/*.md`
 - `_talks/*.md`
 - `_pages/group.html`
 - `_pages/awards.html`
+- `markdown_generator/publications.tsv`
+- `markdown_generator/talks.tsv`
 
-## Important rule
+The generated files are committed so GitHub Pages can build the website normally.
 
-Do not replace `_publications/`, `_talks/`, or member pages from generated output until the preview has been reviewed.
+## Backup of old hardcoded content
 
-The generated preview currently reproduces the existing counts:
+The pre-pipeline hardcoded content is stored in:
+
+- `markdown_generator/hardcoded_backup/_publications/`
+- `markdown_generator/hardcoded_backup/_talks/`
+- `markdown_generator/hardcoded_backup/_pages/group.html`
+- `markdown_generator/hardcoded_backup/_pages/awards.html`
+
+This backup is for comparison and emergency manual restore only. Do not edit it as source data.
+
+## Normal update command
+
+After editing the CSV files, run:
+
+```sh
+python markdown_generator/generate_site_content.py --check --generate-site
+```
+
+This validates the CSV and regenerates the website files.
+
+## Preview-only command
+
+To inspect generated output without touching the live site files:
+
+```sh
+python markdown_generator/generate_site_content.py --check --generate-preview
+```
+
+Preview files are written under `markdown_generator/generated_preview/`, which is ignored by Git.
+
+## Rebuilding CSVs from backup/current site files
+
+Only use this when intentionally re-bootstraping from existing hardcoded site files:
+
+```sh
+python markdown_generator/generate_site_content.py --bootstrap-current --force
+```
+
+After bootstrapping, regenerate the site:
+
+```sh
+python markdown_generator/generate_site_content.py --check --generate-site
+```
+
+## Current counts
+
+The current CSV-driven generation reproduces the existing content counts:
 
 - 38 publications
-- 41 talks/presentations
+- 41 talks/presentations/outreach items
 - 3 awards
-- 29 member pages
+- 29 group members

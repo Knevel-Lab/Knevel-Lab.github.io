@@ -1,7 +1,7 @@
 ---
 title: "Location and amount of joint involvement differentiates rheumatoid arthritis into different clinical subsets"
 collection: publications
-permalink: /publication/2025 Oct 23-Maarseveen_TD_NPJ Digit Med_2025
+permalink: "/publication/2025 Oct 23-Maarseveen_TD_NPJ Digit Med_2025"
 excerpt: "Rheumatoid arthritis (RA) is a heterogeneous disease with variable symptoms, prognosis, and treatment response, necessitating refined patient classification. We applied multimodal deep learning and clustering to identify distinct RA phenotypes using baseline clinical data from 1,387 patients in the Leiden Rheumatology clinic. Four Joint Involvement Patterns (JIP) emerged: foot-predominant arthritis, seropositive oligoarticular disease, seronegative hand arthritis, and polyarthritis. Findings were validated in clinical trial data (n&thinsp;=&thinsp;307) and an independent secondary care cohort (n&thinsp;=&thinsp;515). Clusters showed high stability and significant differences in remission rates (P&thinsp;=&thinsp;0.007) and methotrexate failure (P&thinsp;<&thinsp;0.001). JIP-hand patients had superior outcomes (particularly in ACPA-positive patients) versus JIP-foot (HR:0.37, P&thinsp;<&thinsp;0.001) and JIP-poly (HR:0.33, P&thinsp;=&thinsp;0.005), independent of baseline disease activity and clinical markers. Synovial histology analysis (n&thinsp;=&thinsp;194) revealed distinct inflammatory patterns across clusters, hinting at different underlying biological mechanisms. These validated RA phenotypes based on joint involvement patterns may enable targeted research into disease mechanisms and personalized treatment strategies."
 date: 2025 Oct 23
 venue: "NPJ Digit Med"

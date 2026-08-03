@@ -1,7 +1,7 @@
 ---
 title: "Recommendation to implementation of remote patient monitoring in rheumatology: lessons learned and barriers to take"
 collection: publications
-permalink: /publication/2023 Dec 6-Hamann_P_RMD Open_2023
+permalink: "/publication/2023 Dec 6-Hamann_P_RMD Open_2023"
 excerpt: "Remote patient monitoring (RPM) leverages advanced technology to monitor and manage patients' health remotely and continuously. In 2022 European Alliance of Associations for Rheumatology (EULAR) points-to-consider for remote care were published to foster adoption of RPM, providing guidelines on where to position RPM in our practices. Sample papers and studies describe the value of RPM. But for many rheumatologists, the unanswered question remains the 'how to?' implement RPM.Using the successful, though not frictionless example of the Southmead rheumatology department, we address three types of barriers for the implementation of RPM: service, clinician and patients, with subsequent learning points that could be helpful for new teams planning to implement RPM. These address, but are not limited to, data governance, selecting high quality cost-effective solutions and ensuring compliance with data protection regulations. In addition, we describe five lacunas that could further improve RPM when addressed: establishing quality standards, creating a comprehensive database of available RPM tools, integrating data with electronic patient records, addressing reimbursement uncertainties and improving digital literacy among patients and healthcare professionals."
 date: 2023 Dec 6
 venue: "RMD Open"

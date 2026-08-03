@@ -1,0 +1,16 @@
+---
+title: "Toward Earlier Diagnosis Using Combined eHealth Tools in Rheumatology: The Joint Pain Assessment Scoring Tool (JPAST) Project"
+collection: publications
+permalink: /publication/2020 May 15-Knitza_J_JMIR Mhealth Uhealth_2020
+excerpt: "Outcomes of patients with inflammatory rheumatic diseases have significantly improved over the last three decades, mainly due to therapeutic innovations, more timely treatment, and a recognition of the need to monitor response to treatment and to titrate treatments accordingly. Diagnostic delay remains a major challenge for all stakeholders. The combination of electronic health (eHealth) and serologic and genetic markers holds great promise to improve the current management of patients with inflammatory rheumatic diseases by speeding up access to appropriate care. The Joint Pain Assessment Scoring Tool (JPAST) project, funded by the European Union (EU) European Institute of Innovation and Technology (EIT) Health program, is a unique European project aiming to enable and accelerate personalized precision medicine for early treatment in rheumatology, ultimately also enabling prevention. The aim of the project is to facilitate these goals while at the same time, reducing cost for society and patients."
+date: 2020 May 15
+venue: "JMIR Mhealth Uhealth"
+paperurl: "https://doi.org/10.2196/17507"
+citation: "Knitza J, Knevel R, Raza K, Bruce T, Eimer E, Gehring I, Mathsson-Alm L, Poorafshar M, Hueber AJ, Schett G, Johannesson M, Catrina A, Klareskog L; JPAST Group. (2020) &quot;Toward Earlier Diagnosis Using Combined eHealth Tools in Rheumatology: The Joint Pain Assessment Scoring Tool (JPAST) Project&quot; <i>JMIR Mhealth Uhealth. 2020 May 15;8(5):e17507. doi: 10.2196/17507.</i>"
+---
+
+<a href='https://doi.org/10.2196/17507'>Download paper here</a>
+
+Outcomes of patients with inflammatory rheumatic diseases have significantly improved over the last three decades, mainly due to therapeutic innovations, more timely treatment, and a recognition of the need to monitor response to treatment and to titrate treatments accordingly. Diagnostic delay remains a major challenge for all stakeholders. The combination of electronic health (eHealth) and serologic and genetic markers holds great promise to improve the current management of patients with inflammatory rheumatic diseases by speeding up access to appropriate care. The Joint Pain Assessment Scoring Tool (JPAST) project, funded by the European Union (EU) European Institute of Innovation and Technology (EIT) Health program, is a unique European project aiming to enable and accelerate personalized precision medicine for early treatment in rheumatology, ultimately also enabling prevention. The aim of the project is to facilitate these goals while at the same time, reducing cost for society and patients.
+
+Recommended citation: Knitza J, Knevel R, Raza K, Bruce T, Eimer E, Gehring I, Mathsson-Alm L, Poorafshar M, Hueber AJ, Schett G, Johannesson M, Catrina A, Klareskog L; JPAST Group. (2020) &quot;Toward Earlier Diagnosis Using Combined eHealth Tools in Rheumatology: The Joint Pain Assessment Scoring Tool (JPAST) Project&quot; <i>JMIR Mhealth Uhealth. 2020 May 15;8(5):e17507. doi: 10.2196/17507.</i>

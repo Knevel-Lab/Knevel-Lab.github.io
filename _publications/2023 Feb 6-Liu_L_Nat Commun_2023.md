@@ -1,7 +1,7 @@
 ---
 title: "Author Correction: Genetic regulation of serum IgA levels and susceptibility to common immune, infectious, kidney, and cardio-metabolic traits"
 collection: publications
-permalink: /publication/2023 Feb 6-Liu_L_Nat Commun_2023
+permalink: "/publication/2023 Feb 6-Liu_L_Nat Commun_2023"
 excerpt: "Liu L(1), Khan A(1), Sanchez-Rodriguez E(1), Zanoni F(1), Li Y(1), Steers N(1), Balderes O(1), Zhang J(1), Krithivasan P(1), LeDesma RA(2), Fischman C(3), Hebbring SJ(4), Harley JB(5)(6)(7), Moncrieffe H(5)(6), Kottyan LC(5)(6), Namjou-Khales B(5)(6), Walunas TL(8), Knevel R(9), Raychaudhuri S(9), Karlson EW(9), Denny JC(10), Stanaway IB(11), Crosslin D(12), Rauen T(13), Floege J(13), Eitner F(13)(14), Moldoveanu Z(15), Reily C(15), Knoppova B(15), Hall S(15), Sheff JT(15), Julian BA(15), Wyatt RJ(16), Suzuki H(17), Xie J(18), Chen N(18), Zhou X(19), Zhang H(19), Hammarstr&ouml;m L(20), Viktorin A(21), Magnusson PKE(21), Shang N(22), Hripcsak G(22), Weng C(22), Rundek T(23)(24), Elkind MSV(25), Oelsner EC(1), Barr RG(26)(27), Ionita-Laza I(28), Novak J(15), Gharavi AG(1), Kiryluk K(29)."
 date: 2023 Feb 6
 venue: "Nat Commun"
