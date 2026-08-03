@@ -6,6 +6,7 @@ import csv
 import html
 import json
 import re
+import shlex
 import shutil
 import subprocess
 import sys
@@ -28,6 +29,7 @@ HOST = "127.0.0.1"
 PORT = 8765
 FIELDS = ["record_id", "member_ids", "member_names", "record_type", "title", "date", "date_display", "year", "venue", "location", "role", "authors", "citation", "doi", "url", "pubmed_id", "abstract_or_description", "image", "visibility", "featured", "source_file", "permalink", "notes_private"]
 ALLOWED_IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif", ".webp"}
+BASH_CANDIDATES = [Path("C:/msys64/usr/bin/bash.exe"), Path("C:/msys64/ucrt64/bin/bash.exe")]
 REQUIRED_BY_TYPE = {
     "publication": ["title", "date", "venue", "authors", "citation", "pubmed_id"],
     "talk": ["title", "date", "venue"],
@@ -149,6 +151,39 @@ def save_image(file_item: tuple[str, bytes] | None, record_id: str) -> str:
     (IMAGES_DIR / filename).write_bytes(payload)
     return filename
 
+def msys_path(path: Path) -> str:
+    resolved = path.resolve()
+    drive = resolved.drive.rstrip(":").lower()
+    parts = [part for part in resolved.parts[1:]]
+    return f"/{drive}/" + "/".join(parts)
+
+
+def find_bash() -> Path | None:
+    for candidate in BASH_CANDIDATES:
+        if candidate.exists():
+            return candidate
+    return None
+
+
+def run_jekyll_build() -> str:
+    bash = find_bash()
+    if bash is None:
+        return "Local Jekyll preview build skipped: MSYS2 bash was not found. Restart Jekyll manually if needed."
+    root = msys_path(ROOT)
+    command = (
+        "export PATH=/ucrt64/bin:/usr/bin:$PATH; "
+        "export TZ=UTC; "
+        f"cd {shlex.quote(root)}; "
+        "export BUNDLER_VERSION=2.6.9; "
+        "export RUBYLIB=.; "
+        "export RUBYOPT=-rlocal/ruby34_compat; "
+        "BUNDLE_FORCE_RUBY_PLATFORM=true /ucrt64/bin/bundle _2.6.9_ exec jekyll build"
+    )
+    result = subprocess.run([str(bash), "-lc", command], cwd=ROOT, text=True, capture_output=True, timeout=90)
+    output = (result.stdout or "") + (result.stderr or "")
+    if result.returncode != 0:
+        return "Local Jekyll preview build failed after CSV/site-source generation:\n" + output
+    return "Local Jekyll preview build completed. Refresh http://127.0.0.1:4000/publications/.\n" + output
 
 def pubmed_lookup(pmid: str) -> dict[str, str]:
     pmid = re.sub(r"\D", "", pmid or "")
@@ -272,7 +307,9 @@ class Handler(BaseHTTPRequestHandler):
         if result.returncode != 0:
             self.send_json(500, {"ok": False, "error": result.stderr or result.stdout})
             return
-        self.send_json(200, {"ok": True, "record_id": record_id, "image": row["image"], "output": result.stdout})
+        preview_output = run_jekyll_build()
+        output = result.stdout + "\n" + preview_output
+        self.send_json(200, {"ok": True, "record_id": record_id, "image": row["image"], "output": output})
 
 
 def main() -> None:
