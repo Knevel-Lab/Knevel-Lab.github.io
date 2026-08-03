@@ -25,3 +25,4 @@ markdown_generator/generated_preview/
 vendor/
 __pycache__/
 markdown_generator/__pycache__/
+markdown_generator/form_backups/

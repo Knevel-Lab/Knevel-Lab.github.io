@@ -405,6 +405,56 @@ def award_records(members: list[dict[str, str]]) -> list[dict[str, str]]:
     return records
 
 
+def linked_item_records(page_name: str, record_type: str, title_tag: str, default_role: str = "") -> list[dict[str, str]]:
+    path = ROOT / "_pages" / page_name
+    if not path.exists():
+        return []
+    text = read_text(path)
+    pattern = rf"<{title_tag}>(.*?)</{title_tag}>\s*<div style=\"height: 200px;\">(.*?)</div>"
+    records: list[dict[str, str]] = []
+    for idx, (raw_title, block) in enumerate(re.findall(pattern, text, re.S), start=1):
+        title = html.unescape(re.sub(r"<.*?>", "", raw_title).strip())
+        link_match = re.search(r"<a href=\"([^\"]+)\"", block)
+        img_match = re.search(r"<img src=\"/images/([^\"]+)\"[^>]*alt=\"([^\"]*)\"", block)
+        paragraphs = re.findall(r"<p>(.*?)</p>", block, re.S)
+        description_parts: list[str] = []
+        role = default_role
+        for paragraph in paragraphs:
+            clean = html.unescape(re.sub(r"<.*?>", " ", paragraph))
+            clean = re.sub(r"\s+", " ", clean).strip()
+            if clean.lower().startswith("developed by"):
+                role = clean
+            elif clean:
+                description_parts.append(clean)
+        records.append(
+            activity_template(
+                record_id=f"{record_type}_{idx}_{slugify(title)}",
+                record_type=record_type,
+                title=title,
+                date="",
+                date_display="",
+                year="",
+                venue="",
+                location="",
+                role=role,
+                url=link_match.group(1) if link_match else "",
+                abstract_or_description=" ".join(description_parts),
+                image=img_match.group(1) if img_match else "",
+                visibility="public",
+                source_file=str(path.relative_to(ROOT)).replace("\\", "/"),
+                member_ids="lab",
+                member_names="Knevel Lab",
+            )
+        )
+    return records
+
+
+def application_records() -> list[dict[str, str]]:
+    return linked_item_records("applications.html", "application", "h4")
+
+
+def project_records() -> list[dict[str, str]]:
+    return linked_item_records("projects.html", "project", "h2")
 def activity_template(**kwargs: str) -> dict[str, str]:
     row = {field: "" for field in ACTIVITY_FIELDS}
     row.update({key: value or "" for key, value in kwargs.items() if key in row})
@@ -448,6 +498,8 @@ def backup_hardcoded_site(force: bool = False) -> None:
         ROOT / "_talks",
         ROOT / "_pages" / "group.html",
         ROOT / "_pages" / "awards.html",
+        ROOT / "_pages" / "applications.html",
+        ROOT / "_pages" / "projects.html",
     ]
     for target in targets:
         if target.is_dir():
@@ -478,7 +530,7 @@ def bootstrap(force: bool) -> None:
             names = ", ".join(str(p.relative_to(ROOT)) for p in existing)
             raise SystemExit(f"Refusing to overwrite existing file(s): {names}. Use --force.")
     members = extract_group_members()
-    records = publication_records(members) + talk_records(members) + award_records(members)
+    records = publication_records(members) + talk_records(members) + award_records(members) + application_records() + project_records()
     write_csv(MEMBERS_CSV, members, MEMBER_FIELDS)
     write_csv(ACTIVITIES_CSV, records, ACTIVITY_FIELDS)
     print(f"Wrote {MEMBERS_CSV.relative_to(ROOT)} with {len(members)} members")
@@ -689,6 +741,56 @@ redirect_from:
     return "\n\n".join(sections).rstrip() + "\n"
 
 
+def render_linked_item_block(row: dict[str, str], title_tag: str) -> str:
+    title = row.get("title", "").strip()
+    image = row.get("image", "").strip()
+    url = row.get("url", "").strip()
+    description = row.get("abstract_or_description", "").strip()
+    role = row.get("role", "").strip()
+    lines = [f"<{title_tag}>{html.escape(title)}</{title_tag}>", '<div style="height: 200px;">']
+    if url:
+        lines.append(f'<a href="{html.escape(url, quote=True)}">')
+    if image:
+        lines.append(f'<img src="/images/{html.escape(image, quote=True)}" alt="{html.escape(title, quote=True)}" class="applink">')
+    if url:
+        lines.append("</a>")
+    if description:
+        lines.append(f"<p>{html.escape(description)}</p>")
+    if role:
+        lines.append(f"<p>{html.escape(role)}</p>")
+    lines.append("</div>")
+    lines.append("<hr>")
+    return "\n".join(lines)
+
+
+def generate_applications_html(applications: list[dict[str, str]]) -> str:
+    header = """---
+layout: archive
+title: "Applications"
+permalink: /applications/
+author_profile: true
+redirect_from:
+  - /applications
+---
+"""
+    visible = [row for row in applications if row.get("visibility", "public") == "public"]
+    return header + "\n" + "\n\n".join(render_linked_item_block(row, "h4") for row in visible).rstrip() + "\n"
+
+
+def generate_projects_html(projects: list[dict[str, str]]) -> str:
+    header = """---
+layout: archive
+title: "Projects"
+permalink: /projects/
+author_profile: true
+redirect_from:
+  - /projects
+---
+
+<h4>An overview of our (international) projects and collaborations</h4>
+"""
+    visible = [row for row in projects if row.get("visibility", "public") == "public"]
+    return header + "\n" + "\n\n".join(render_linked_item_block(row, "h2") for row in visible).rstrip() + "\n"
 def render_award_block(row: dict[str, str]) -> str:
     title = row.get("title", "").strip()
     image = row.get("image", "").strip()
@@ -749,6 +851,8 @@ def generate_site(force_backup: bool = False) -> None:
         and r.get("record_type") in {"talk", "invited_presentation", "public_outreach"}
     ]
     awards = [r for r in activities if r.get("visibility", "public") == "public" and r.get("record_type") == "award"]
+    applications = [r for r in activities if r.get("visibility", "public") == "public" and r.get("record_type") == "application"]
+    projects = [r for r in activities if r.get("visibility", "public") == "public" and r.get("record_type") == "project"]
 
     clear_markdown_dir(ROOT / "_publications")
     clear_markdown_dir(ROOT / "_talks")
@@ -762,6 +866,8 @@ def generate_site(force_backup: bool = False) -> None:
 
     write_text(ROOT / "_pages" / "group.html", generate_group_html(members))
     write_text(ROOT / "_pages" / "awards.html", generate_awards_html(awards))
+    write_text(ROOT / "_pages" / "applications.html", generate_applications_html(applications))
+    write_text(ROOT / "_pages" / "projects.html", generate_projects_html(projects))
     write_tsv(GENERATOR_DIR / "publications.tsv", publications_to_tsv_rows(publications), [
         "pub_date",
         "title",
@@ -784,6 +890,8 @@ def generate_site(force_backup: bool = False) -> None:
     print(f"Generated site publications: {len(publications)}")
     print(f"Generated site talks/presentations/outreach: {len(talks)}")
     print(f"Generated site awards: {len(awards)}")
+    print(f"Generated site applications: {len(applications)}")
+    print(f"Generated site projects: {len(projects)}")
     print(f"Generated group members: {len(members)}")
 def generate_preview() -> None:
     activities = read_csv_rows(ACTIVITIES_CSV)
@@ -803,6 +911,8 @@ def generate_preview() -> None:
         and r.get("record_type") in {"talk", "invited_presentation", "public_outreach"}
     ]
     awards = [r for r in activities if r.get("visibility", "public") == "public" and r.get("record_type") == "award"]
+    applications = [r for r in activities if r.get("visibility", "public") == "public" and r.get("record_type") == "application"]
+    projects = [r for r in activities if r.get("visibility", "public") == "public" and r.get("record_type") == "project"]
 
     for row in publications:
         filename, text = generate_publication_md(row)

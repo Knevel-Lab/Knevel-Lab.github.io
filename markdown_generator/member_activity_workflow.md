@@ -75,3 +75,31 @@ The current CSV-driven generation reproduces the existing content counts:
 - 41 talks/presentations/outreach items
 - 3 awards
 - 29 group members
+## Local input form
+
+A local browser form is available for people who should not edit the CSV manually:
+
+```sh
+python markdown_generator/activity_form_server.py
+```
+
+Open:
+
+```text
+http://127.0.0.1:8765/
+```
+
+The form supports:
+
+- Publications, with PubMed ID auto-fill for title, journal, DOI, authors, citation, URL, abstract, and date.
+- Talks / presentations / invited presentations / public outreach.
+- Awards, with one image upload.
+- Applications, with one image upload.
+- Projects, with one image upload.
+
+When the form is saved it:
+
+- automatically creates `record_id`, `member_ids`, and `member_names`;
+- copies one uploaded image to `images/` and stores the filename in the CSV `image` column;
+- backs up the previous CSV under `markdown_generator/form_backups/`;
+- runs `python markdown_generator/generate_site_content.py --check --generate-site`.
