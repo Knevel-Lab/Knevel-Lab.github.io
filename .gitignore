@@ -18,3 +18,8 @@ AGENTS.md
 CLAUDE.md
 plan/
 markdown_generator/generated_preview/
+# Local Ruby/Bundler install artifacts
+.bundle/
+.tmp/
+.tmp-ucrt/
+vendor/
