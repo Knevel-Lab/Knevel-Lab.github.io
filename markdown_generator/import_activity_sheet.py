@@ -67,7 +67,7 @@ COLUMN_ALIASES = {
     "image": "image",
     "image url": "image",
     "image upload": "image",
-    "image_upload": "image",
+    "image_upload": "image_upload",
     "image url or google drive upload": "image",
     "visibility": "visibility",
 }
@@ -85,6 +85,8 @@ TYPE_ALIASES = {
     "project": "project",
     "publication": "publication",
 }
+TYPE_PREFIXES = ("talk", "invited_presentation", "public_outreach", "award", "application", "project")
+COMMON_SUFFIXES = ("member_ids", "title", "date", "venue", "location", "role", "url", "abstract_or_description", "image", "image_upload", "visibility")
 IMAGE_EXT_BY_MIME = {
     "image/jpeg": ".jpg",
     "image/png": ".png",
@@ -116,6 +118,34 @@ def normalize_type(value: str) -> str:
     key = re.sub(r"\s+", " ", key)
     return TYPE_ALIASES.get(key, key.replace(" ", "_"))
 
+def value_for_type(sheet_row: dict[str, str], record_type: str, field: str, default: str = "") -> str:
+    candidates = [f"{record_type}_{field}"]
+    if record_type in {"talk", "invited_presentation", "public_outreach"}:
+        candidates.append(f"talk_{field}")
+    candidates.append(field)
+    for key in candidates:
+        value = sheet_row.get(key, "")
+        if value:
+            return value
+    return default
+
+
+def collapse_branch_row(sheet_row: dict[str, str]) -> dict[str, str]:
+    record_type = normalize_type(sheet_row.get("record_type", ""))
+    if not record_type:
+        for prefix in TYPE_PREFIXES:
+            if any(sheet_row.get(f"{prefix}_{suffix}", "") for suffix in COMMON_SUFFIXES):
+                record_type = prefix
+                break
+    collapsed = dict(sheet_row)
+    collapsed["record_type"] = record_type
+    if record_type:
+        for field in COMMON_SUFFIXES:
+            collapsed[field] = value_for_type(sheet_row, record_type, field, collapsed.get(field, ""))
+    image_upload = value_for_type(sheet_row, record_type, "image_upload", "") if record_type else ""
+    if image_upload and not collapsed.get("image"):
+        collapsed["image"] = image_upload
+    return collapsed
 
 def normalize_date(raw: str) -> tuple[str, str, str]:
     raw = clean(raw)
@@ -156,6 +186,7 @@ def read_sheet_rows(path: Path) -> list[dict[str, str]]:
         rows = []
         for raw in reader:
             row = {normalize_header(key): clean(value) for key, value in raw.items() if key is not None}
+            row = collapse_branch_row(row)
             if any(row.values()):
                 rows.append(row)
         return rows

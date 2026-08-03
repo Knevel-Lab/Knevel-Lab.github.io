@@ -23,6 +23,7 @@ function createKnevelWebsiteActivityForm() {
     ['david_steeman', 'David Steeman'],
     ['lab', 'Lab-wide item'],
   ];
+  const memberChoices = members.map(([id, name]) => `${id} = ${name}`);
 
   const sheet = SpreadsheetApp.create('Knevel Lab website activity submissions');
   const form = FormApp.create('Knevel Lab website activity submission');
@@ -30,74 +31,170 @@ function createKnevelWebsiteActivityForm() {
   form.setCollectEmail(true);
   form.setDestination(FormApp.DestinationType.SPREADSHEET, sheet.getId());
 
-  form.addListItem()
+  const typeItem = form.addMultipleChoiceItem()
     .setTitle('record_type')
-    .setHelpText('Publication is intentionally excluded.')
-    .setChoiceValues(['talk', 'invited_presentation', 'public_outreach', 'award', 'application', 'project'])
+    .setHelpText('Choose one. Publication is intentionally excluded.')
     .setRequired(true);
 
-  form.addCheckboxItem()
-    .setTitle('member_ids')
-    .setHelpText('Select all relevant lab members, or lab for a lab-wide item.')
-    .setChoiceValues(members.map(([id, name]) => `${id} = ${name}`))
-    .setRequired(true);
+  const talkPage = form.addPageBreakItem().setTitle('Talk / presentation');
+  addTalkSection_(form, memberChoices, 'talk');
 
-  form.addTextItem()
-    .setTitle('title')
-    .setHelpText('Required for every item.')
-    .setRequired(true);
+  const invitedPage = form.addPageBreakItem().setTitle('Invited presentation');
+  addTalkSection_(form, memberChoices, 'invited_presentation');
 
-  form.addTextItem()
-    .setTitle('date')
-    .setHelpText('Use YYYY-MM-DD if possible. YYYY or YYYY Mon is also accepted.')
-    .setRequired(true);
+  const outreachPage = form.addPageBreakItem().setTitle('Public outreach');
+  addTalkSection_(form, memberChoices, 'public_outreach');
 
-  form.addTextItem()
-    .setTitle('venue')
-    .setHelpText('Meeting, event, award body, project funder, or application host.')
-    .setRequired(false);
+  const awardPage = form.addPageBreakItem().setTitle('Award');
+  addAwardSection_(form, memberChoices);
 
-  form.addTextItem()
-    .setTitle('location')
-    .setHelpText('City, country, or online.')
-    .setRequired(false);
+  const applicationPage = form.addPageBreakItem().setTitle('Application');
+  addLinkedItemSection_(form, memberChoices, 'application', 'Application name', 'Application URL', true);
 
-  form.addTextItem()
-    .setTitle('role')
-    .setHelpText('Invited speaker, awardee, developer, presenter, etc.')
-    .setRequired(false);
+  const projectPage = form.addPageBreakItem().setTitle('Project');
+  addLinkedItemSection_(form, memberChoices, 'project', 'Project name', 'Project URL', true);
 
-  form.addTextItem()
-    .setTitle('url')
-    .setHelpText('Optional relevant link.')
-    .setRequired(false);
-
-  form.addParagraphTextItem()
-    .setTitle('abstract_or_description')
-    .setHelpText('Short text to show on the website.')
-    .setRequired(false);
-
-  form.addParagraphTextItem()
-    .setTitle('image')
-    .setHelpText('Optional image URL. If file upload is not available for your account, paste a shareable Drive or web image URL here.')
-    .setRequired(false);
-
-  try {
-    form.addFileUploadItem()
-      .setTitle('image_upload')
-      .setHelpText('Optional, one image for awards, applications, or projects. Google may require respondents to sign in.')
-      .setMaxFiles(1)
-      .setRequired(false);
-  } catch (error) {
-    Logger.log('File upload item could not be added for this account: ' + error);
-  }
-
-  form.addListItem()
-    .setTitle('visibility')
-    .setChoiceValues(['public', 'hidden'])
-    .setRequired(true);
+  typeItem.setChoices([
+    typeItem.createChoice('talk', talkPage),
+    typeItem.createChoice('invited_presentation', invitedPage),
+    typeItem.createChoice('public_outreach', outreachPage),
+    typeItem.createChoice('award', awardPage),
+    typeItem.createChoice('application', applicationPage),
+    typeItem.createChoice('project', projectPage),
+  ]);
 
   Logger.log('Form edit URL: ' + form.getEditUrl());
   Logger.log('Form public URL: ' + form.getPublishedUrl());
   Logger.log('Response Sheet URL: ' + sheet.getUrl());
+}
+
+function addMembers_(form, title, choices) {
+  return form.addCheckboxItem()
+    .setTitle(title)
+    .setHelpText('Select all relevant lab members, or lab for a lab-wide item.')
+    .setChoiceValues(choices)
+    .setRequired(true);
+}
+
+function addVisibility_(form, prefix) {
+  return form.addListItem()
+    .setTitle(prefix + '_visibility')
+    .setChoiceValues(['public', 'hidden'])
+    .setRequired(true);
+}
+
+function addTalkSection_(form, memberChoices, prefix) {
+  addMembers_(form, prefix + '_member_ids', memberChoices);
+  form.addTextItem()
+    .setTitle(prefix + '_title')
+    .setHelpText('Title as it should appear on the website.')
+    .setRequired(true);
+  form.addTextItem()
+    .setTitle(prefix + '_date')
+    .setHelpText('Use YYYY-MM-DD if possible. YYYY or YYYY Mon is also accepted.')
+    .setRequired(true);
+  form.addTextItem()
+    .setTitle(prefix + '_venue')
+    .setHelpText('Meeting, event, or outlet name.')
+    .setRequired(true);
+  form.addTextItem()
+    .setTitle(prefix + '_location')
+    .setHelpText('City, country, or online.')
+    .setRequired(false);
+  form.addTextItem()
+    .setTitle(prefix + '_role')
+    .setHelpText('Presenter, invited speaker, panelist, etc.')
+    .setRequired(false);
+  form.addTextItem()
+    .setTitle(prefix + '_url')
+    .setHelpText('Optional relevant link.')
+    .setRequired(false);
+  form.addParagraphTextItem()
+    .setTitle(prefix + '_abstract_or_description')
+    .setHelpText('Optional short description.')
+    .setRequired(false);
+  addVisibility_(form, prefix);
+}
+
+function addAwardSection_(form, memberChoices) {
+  const prefix = 'award';
+  addMembers_(form, prefix + '_member_ids', memberChoices);
+  form.addTextItem()
+    .setTitle(prefix + '_title')
+    .setHelpText('Award name as it should appear on the website.')
+    .setRequired(true);
+  form.addTextItem()
+    .setTitle(prefix + '_date')
+    .setHelpText('Use YYYY-MM-DD if possible. YYYY or YYYY Mon is also accepted.')
+    .setRequired(true);
+  form.addTextItem()
+    .setTitle(prefix + '_role')
+    .setHelpText('Awardee and short role, e.g. Awardee: Georgy Gomon.')
+    .setRequired(true);
+  form.addParagraphTextItem()
+    .setTitle(prefix + '_abstract_or_description')
+    .setHelpText('Short website text, e.g. what was awarded and why.')
+    .setRequired(true);
+  form.addTextItem()
+    .setTitle(prefix + '_venue')
+    .setHelpText('Award body, congress, or event name.')
+    .setRequired(false);
+  form.addTextItem()
+    .setTitle(prefix + '_location')
+    .setHelpText('City, country, or online.')
+    .setRequired(false);
+  form.addTextItem()
+    .setTitle(prefix + '_url')
+    .setHelpText('Optional information link.')
+    .setRequired(false);
+  addImageQuestions_(form, prefix);
+  addVisibility_(form, prefix);
+}
+
+function addLinkedItemSection_(form, memberChoices, prefix, titleHelp, urlHelp, includeImage) {
+  addMembers_(form, prefix + '_member_ids', memberChoices);
+  form.addTextItem()
+    .setTitle(prefix + '_title')
+    .setHelpText(titleHelp)
+    .setRequired(true);
+  form.addTextItem()
+    .setTitle(prefix + '_url')
+    .setHelpText(urlHelp)
+    .setRequired(true);
+  form.addParagraphTextItem()
+    .setTitle(prefix + '_abstract_or_description')
+    .setHelpText('Short text to show on the website.')
+    .setRequired(true);
+  form.addTextItem()
+    .setTitle(prefix + '_role')
+    .setHelpText('Developer, collaborator, funder, or role shown below the description.')
+    .setRequired(false);
+  form.addTextItem()
+    .setTitle(prefix + '_date')
+    .setHelpText('Optional. Use YYYY-MM-DD if relevant.')
+    .setRequired(false);
+  form.addTextItem()
+    .setTitle(prefix + '_venue')
+    .setHelpText('Optional host, funder, or organization.')
+    .setRequired(false);
+  if (includeImage) {
+    addImageQuestions_(form, prefix);
+  }
+  addVisibility_(form, prefix);
+}
+
+function addImageQuestions_(form, prefix) {
+  form.addParagraphTextItem()
+    .setTitle(prefix + '_image')
+    .setHelpText('Optional image URL. Leave blank if uploading a file below.')
+    .setRequired(false);
+  try {
+    form.addFileUploadItem()
+      .setTitle(prefix + '_image_upload')
+      .setHelpText('Optional, one image. Google may require respondents to sign in.')
+      .setMaxFiles(1)
+      .setRequired(false);
+  } catch (error) {
+    Logger.log('File upload item could not be added for ' + prefix + ': ' + error);
+  }
 }

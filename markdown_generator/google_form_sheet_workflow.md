@@ -1,10 +1,10 @@
-﻿# Google Form / Google Sheet Website Workflow
+# Google Form / Google Sheet Website Workflow
 
 This is the preferred lab-member submission workflow. It does not require the maintainer's local checkout for routine updates.
 
 ## Scope
 
-Lab members submit only non-publication website items:
+The Google Form uses section branching. Lab members first choose the item type, then see only the questions needed for that type. Lab members submit only non-publication website items:
 
 - `talk`
 - `invited_presentation`
@@ -59,7 +59,7 @@ The workflow uses Google Drive read-only scope and creates a PR; it does not pus
 
 ## Images
 
-For Awards, Applications, and Projects, the form supports one image.
+For Awards, Applications, and Projects, the relevant section supports one image. Talk, invited presentation, and outreach sections do not show image questions.
 
 Preferred options:
 
@@ -76,3 +76,11 @@ These are for development only; routine operation should use GitHub Actions.
 python markdown_generator/import_activity_sheet.py --sheet-csv markdown_generator/google_sheet_activity_template.csv --dry-run
 python markdown_generator/generate_site_content.py --check --generate-site
 ```
+
+## Type-specific required fields
+
+The branched Google Form uses different required fields per section:
+
+- Talk / invited presentation / public outreach: member IDs, title, date, venue, visibility.
+- Award: member IDs, title, date, awardee/role, description, visibility; optional venue, location, URL, and one image.
+- Application / project: member IDs, title, URL, description, visibility; optional role, date, venue, and one image.
