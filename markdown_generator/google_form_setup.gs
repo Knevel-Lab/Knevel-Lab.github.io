@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Create the Knevel Lab website activity Google Form and linked Google Sheet.
  *
  * Run once from https://script.google.com/ with the Google account that should
@@ -66,6 +66,7 @@ function createKnevelWebsiteActivityForm() {
   Logger.log('Form edit URL: ' + form.getEditUrl());
   Logger.log('Form public URL: ' + form.getPublishedUrl());
   Logger.log('Response Sheet URL: ' + sheet.getUrl());
+  Logger.log('Manual file upload setup required: add File upload questions named award_image_upload, application_image_upload, and project_image_upload in the Google Form editor.');
 }
 
 function addMembers_(form, title, choices) {
@@ -186,15 +187,10 @@ function addLinkedItemSection_(form, memberChoices, prefix, titleHelp, urlHelp, 
 function addImageQuestions_(form, prefix) {
   form.addParagraphTextItem()
     .setTitle(prefix + '_image')
-    .setHelpText('Optional image URL. Leave blank if uploading a file below.')
+    .setHelpText('Optional image URL. Leave blank if the maintainer has added the manual File upload question named ' + prefix + '_image_upload below.')
     .setRequired(false);
-  try {
-    form.addFileUploadItem()
-      .setTitle(prefix + '_image_upload')
-      .setHelpText('Optional, one image. Google may require respondents to sign in.')
-      .setMaxFiles(1)
-      .setRequired(false);
-  } catch (error) {
-    Logger.log('File upload item could not be added for ' + prefix + ': ' + error);
-  }
+
+  form.addSectionHeaderItem()
+    .setTitle(prefix + '_image_upload')
+    .setHelpText('Maintainer setup note: Google Apps Script cannot create File upload questions. In the form editor, manually add a File upload question directly below this note, title it exactly ' + prefix + '_image_upload, allow 1 file, and restrict file type to image. Respondents will then be able to choose a file from their local PC.');
 }

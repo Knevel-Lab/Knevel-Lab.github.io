@@ -61,10 +61,23 @@ The workflow uses Google Drive read-only scope and creates a PR; it does not pus
 
 For Awards, Applications, and Projects, the relevant section supports one image. Talk, invited presentation, and outreach sections do not show image questions.
 
-Preferred options:
+Google Forms can accept local PC uploads through a File upload question, but Apps Script and the Google Forms API cannot create that question automatically. After running `createKnevelWebsiteActivityForm()`, open the Form edit URL and manually add these File upload questions directly below the matching setup note:
 
-- Use the Google Form file upload question, then let the workflow download the Drive file into `images/`.
-- Or paste a public image URL into the `image` field. The generated site can render HTTP(S) image URLs directly.
+- Award section: `award_image_upload`
+- Application section: `application_image_upload`
+- Project section: `project_image_upload`
+
+For each File upload question:
+
+- allow 1 file;
+- restrict file type to image;
+- leave it optional unless every submission of that type must include an image.
+
+Respondents will then see the normal local PC file picker. The importer already recognizes these exact column names and can download the uploaded Drive files when the GitHub workflow is configured with Google credentials.
+
+Fallback option:
+
+- Paste a public image URL into the `*_image` URL field. The generated site can render HTTP(S) image URLs directly.
 
 If using Google Form file upload, respondents may need to sign in depending on the Google Workspace settings.
 
