@@ -632,7 +632,7 @@ def generate_member_page(member: dict[str, str], activities: list[dict[str, str]
     )
     lines = [fm, ""]
     if member.get("image"):
-        lines.append(f'<img src="/images/{member["image"]}" alt="{member["name"]}" class="biopic">')
+        lines.append(f'<img src="{html.escape(image_src(member["image"]), quote=True)}" alt="{html.escape(member["name"], quote=True)}" class="biopic">')
     if member.get("bio"):
         lines.append("")
         lines.append(member["bio"])
@@ -699,6 +699,13 @@ def member_links_html(member: dict[str, str]) -> str:
             links.append(f'<a href="{html.escape(href, quote=True)}"><i class="{icon_class}" aria-hidden="true"></i> {label}</a>')
     return "\n".join(links)
 
+def image_src(image: str) -> str:
+    image = (image or "").strip()
+    if not image:
+        return ""
+    if re.match(r"https?://", image) or image.startswith("/"):
+        return image
+    return f"/images/{image}"
 
 def render_member_block(member: dict[str, str]) -> str:
     name = member.get("name", "").strip()
@@ -707,7 +714,7 @@ def render_member_block(member: dict[str, str]) -> str:
     links = member_links_html(member)
     lines = [
         '<div style="height: 150px;">',
-        f'<img src="/images/{html.escape(image, quote=True)}" alt="{html.escape(name, quote=True)}" class="biopic">',
+        f'<img src="{html.escape(image_src(image), quote=True)}" alt="{html.escape(name, quote=True)}" class="biopic">',
         f'<h2>{html.escape(name)}</h2>',
     ]
     if bio:
@@ -751,7 +758,7 @@ def render_linked_item_block(row: dict[str, str], title_tag: str) -> str:
     if url:
         lines.append(f'<a href="{html.escape(url, quote=True)}">')
     if image:
-        lines.append(f'<img src="/images/{html.escape(image, quote=True)}" alt="{html.escape(title, quote=True)}" class="applink">')
+        lines.append(f'<img src="{html.escape(image_src(image), quote=True)}" alt="{html.escape(title, quote=True)}" class="applink">')
     if url:
         lines.append("</a>")
     if description:
@@ -798,7 +805,7 @@ def render_award_block(row: dict[str, str]) -> str:
     url = row.get("url", "").strip()
     lines = ['<div style="height: auto;">']
     if image:
-        lines.append(f'<img src="/images/{html.escape(image, quote=True)}" alt="{html.escape(title, quote=True)}" class="biopic">')
+        lines.append(f'<img src="{html.escape(image_src(image), quote=True)}" alt="{html.escape(title, quote=True)}" class="biopic">')
     lines.append(f'<h2>{html.escape(title)}</h2>')
     if description:
         lines.append(html.escape(description))

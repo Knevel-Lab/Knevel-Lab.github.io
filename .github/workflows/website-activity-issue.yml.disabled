@@ -1,0 +1,63 @@
+name: Convert website activity issue to PR
+
+# Disabled by default. Rename this file to website-activity-issue.yml after maintainers approve
+# giving this issue-triggered workflow contents:write and pull-requests:write permissions.
+on:
+  issues:
+    types: [opened, edited, reopened]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  activity-issue-to-pr:
+    if: contains(github.event.issue.labels.*.name, 'website-activity')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Import issue into website CSV
+        env:
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_AUTHOR: ${{ github.event.issue.user.login }}
+        run: |
+          python markdown_generator/import_activity_issue.py --issue-number "$ISSUE_NUMBER"
+          python markdown_generator/generate_site_content.py --check --generate-site
+
+      - name: Create pull request
+        id: cpr
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "Add website activity from issue #${{ github.event.issue.number }}"
+          title: "Add website activity from issue #${{ github.event.issue.number }}"
+          body: |
+            This PR was generated from #${{ github.event.issue.number }}.
+
+            Please review the generated CSV and website files before merging.
+          branch: website-activity/issue-${{ github.event.issue.number }}
+          delete-branch: true
+          labels: website-activity
+
+      - name: Comment on issue
+        if: steps.cpr.outputs.pull-request-url != ''
+        uses: actions/github-script@v7
+        env:
+          PR_URL: ${{ steps.cpr.outputs.pull-request-url }}
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `Created pull request: ${process.env.PR_URL}`
+            })

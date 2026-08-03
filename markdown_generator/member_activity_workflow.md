@@ -103,3 +103,47 @@ When the form is saved it:
 - copies one uploaded image to `images/` and stores the filename in the CSV `image` column;
 - backs up the previous CSV under `markdown_generator/form_backups/`;
 - runs `python markdown_generator/generate_site_content.py --check --generate-site`.
+
+## GitHub Issue Form workflow
+
+A repository issue form is available at:
+
+- `.github/ISSUE_TEMPLATE/website_activity.yml`
+
+Lab members can open a new issue using the "Website activity submission" form. The form is intended for one activity record at a time.
+
+Recommended usage:
+
+- For publications, provide `Type=publication`, lab member IDs, visibility, and a PubMed ID. The importer can fill title, date, journal, authors, citation, DOI, URL, and abstract from PubMed.
+- For talks, invited presentations, and outreach, provide title, date, venue, and optional URL/description.
+- For awards, applications, and projects, paste one image URL or drag one image into the issue image field and keep the GitHub attachment URL.
+
+The importer script is:
+
+```sh
+python markdown_generator/import_activity_issue.py --issue-body-file path/to/issue_body.md --issue-number 123
+python markdown_generator/generate_site_content.py --check --generate-site
+```
+
+A dry run that does not edit the CSV is available:
+
+```sh
+python markdown_generator/import_activity_issue.py --issue-body-file path/to/issue_body.md --issue-number 123 --dry-run
+```
+
+### Disabled automatic PR workflow
+
+A draft workflow is stored at:
+
+- `.github/workflows/website-activity-issue.yml.disabled`
+
+It is intentionally disabled because an issue-triggered workflow that creates pull requests needs `contents: write` and `pull-requests: write`. That means anyone who can create a `website-activity` issue can cause the GitHub Actions bot to create a branch and PR with generated CSV/site changes.
+
+To enable it after maintainer approval:
+
+1. Rename `.github/workflows/website-activity-issue.yml.disabled` to `.github/workflows/website-activity-issue.yml`.
+2. Ensure branch protection requires review before merging into the production branch.
+3. Keep the workflow limited to issues with the `website-activity` label.
+4. Review every generated PR before merge.
+
+The workflow does not push directly to `master`; it creates a reviewable PR branch.

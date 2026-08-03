@@ -1,0 +1,139 @@
+name: Website activity submission
+description: Submit a publication, talk, award, application, or project for the Knevel Lab website.
+title: "Website activity: <short title>"
+labels: ["website-activity"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form to submit one website item. A maintainer or GitHub Action can convert the issue into a pull request; the website is updated only after that PR is reviewed and merged.
+
+        For publications, a PubMed ID is usually enough. Fill extra fields only when PubMed is missing something or the website should use a specific wording.
+
+        For Awards, Applications, and Projects, paste one image URL or drag one image into the image field and keep the generated GitHub attachment URL.
+
+        Current member IDs:
+        - `rachel_knevel` = Rachel Knevel
+        - `tjardo_maarseveen` = Tjardo Maarseveen
+        - `nils_steinz` = Nils Steinz
+        - `ling_qing` = Ling Qing
+        - `floor_dijkstra_zegers` = Floor Dijkstra Zegers
+        - `georgy_gomon` = Georgy Gomon
+        - `daniyal_selani` = Daniyal Selani
+        - `jyaysi_desai` = Jyaysi Desai
+        - `suguru_honda` = Suguru Honda
+        - `inez_den_hond` = Inez den Hond
+        - `bahar_sedaghatikhayat` = Bahar Sedaghatikhayat
+        - `mick_blikman` = Mick Blikman
+        - `qingshuang_xie` = Qingshuang Xie
+        - `david_steeman` = David Steeman
+        - `lab` = lab-wide item
+
+  - type: dropdown
+    id: record_type
+    attributes:
+      label: Type
+      options:
+        - publication
+        - talk
+        - invited_presentation
+        - public_outreach
+        - award
+        - application
+        - project
+    validations:
+      required: true
+
+  - type: input
+    id: member_ids
+    attributes:
+      label: Lab member IDs
+      description: Semicolon-separated IDs from markdown_generator/lab_members.csv. Use lab for lab-wide items.
+      placeholder: rachel_knevel;inez_den_hond
+    validations:
+      required: true
+
+  - type: input
+    id: title
+    attributes:
+      label: Title
+      description: Required for non-publication items. For publications, PubMed ID can fill this automatically.
+      placeholder: Rheumatoid arthritis susceptibility genes show pathotype-specific expression...
+
+  - type: input
+    id: date
+    attributes:
+      label: Date
+      description: Required for non-publication items. Use YYYY-MM-DD when possible. PubMed can fill publication dates.
+      placeholder: 2026-07-24
+
+  - type: input
+    id: venue
+    attributes:
+      label: Venue / journal / meeting
+      placeholder: Ann Rheum Dis, EULAR, Digital Rheumatology Days
+
+  - type: input
+    id: location
+    attributes:
+      label: Location
+      placeholder: Amsterdam, Berlin, online
+
+  - type: input
+    id: role
+    attributes:
+      label: Role / awardee / developer
+      placeholder: Invited speaker, awardee, Developed by Jane Doe
+
+  - type: input
+    id: pubmed_id
+    attributes:
+      label: PubMed ID
+      placeholder: 42498579
+
+  - type: input
+    id: doi
+    attributes:
+      label: DOI
+      placeholder: 10.1016/j.ard.2026.06.032
+
+  - type: input
+    id: url
+    attributes:
+      label: URL
+      placeholder: https://doi.org/10.xxxx/yyyy
+
+  - type: textarea
+    id: authors
+    attributes:
+      label: Authors
+      placeholder: den Hond IC, Reinders MJT, Knevel R
+
+  - type: textarea
+    id: citation
+    attributes:
+      label: Citation
+      placeholder: Leave blank for PubMed-based publication citation.
+
+  - type: textarea
+    id: abstract_or_description
+    attributes:
+      label: Abstract / description
+      placeholder: Short website description. For publications, leave blank to use PubMed abstract when available.
+
+  - type: textarea
+    id: image
+    attributes:
+      label: Image URL or GitHub attachment URL
+      description: Awards, Applications, and Projects can use one image. Drag an image here or paste one URL.
+      placeholder: https://github.com/user-attachments/assets/...
+
+  - type: dropdown
+    id: visibility
+    attributes:
+      label: Visibility
+      options:
+        - public
+        - hidden
+    validations:
+      required: true
