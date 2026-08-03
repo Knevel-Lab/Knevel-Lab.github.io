@@ -11,3 +11,11 @@ Gemfile.lock
 # Ingore files created by npm
 node_modules
 package-lock.json
+
+# Local LLM working notes and agent instructions
+LLM_REPOSITORY_GUIDE.md
+AGENTS.md
+CLAUDE.mc
+CLAUDE.md
+plan/
+markdown_generator/generated_preview/
