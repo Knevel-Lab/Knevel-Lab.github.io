@@ -28,6 +28,15 @@ HOST = "127.0.0.1"
 PORT = 8765
 FIELDS = ["record_id", "member_ids", "member_names", "record_type", "title", "date", "date_display", "year", "venue", "location", "role", "authors", "citation", "doi", "url", "pubmed_id", "abstract_or_description", "image", "visibility", "featured", "source_file", "permalink", "notes_private"]
 ALLOWED_IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif", ".webp"}
+REQUIRED_BY_TYPE = {
+    "publication": ["title", "date", "venue", "authors", "citation", "pubmed_id"],
+    "talk": ["title", "date", "venue"],
+    "invited_presentation": ["title", "date", "venue"],
+    "public_outreach": ["title", "date", "venue"],
+    "award": ["title", "date", "role", "member_ids", "image_file"],
+    "application": ["title", "url", "abstract_or_description", "image_file"],
+    "project": ["title", "url", "abstract_or_description", "image_file"],
+}
 
 
 def slugify(value: str) -> str:
@@ -113,6 +122,22 @@ def first(fields: dict[str, list[str]], key: str, default: str = "") -> str:
     return values[0] if values else default
 
 
+def missing_required_fields(record_type: str, fields: dict[str, list[str]], files: dict[str, tuple[str, bytes]]) -> list[str]:
+    missing: list[str] = []
+    for field in REQUIRED_BY_TYPE.get(record_type, []):
+        if field == "image_file":
+            file_item = files.get("image_file")
+            existing_image = first(fields, "image").strip()
+            if not existing_image and (not file_item or not file_item[0] or not file_item[1]):
+                missing.append(field)
+        elif field == "member_ids":
+            if not fields.get("member_ids"):
+                missing.append(field)
+        elif not first(fields, field).strip():
+            missing.append(field)
+    return missing
+
+
 def save_image(file_item: tuple[str, bytes] | None, record_id: str) -> str:
     if not file_item or not file_item[0] or not file_item[1]:
         return ""
@@ -165,10 +190,21 @@ def pubmed_lookup(pmid: str) -> dict[str, str]:
 
 
 class Handler(BaseHTTPRequestHandler):
+    def send_cors_headers(self) -> None:
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+
+    def do_OPTIONS(self) -> None:
+        self.send_response(204)
+        self.send_cors_headers()
+        self.end_headers()
+
     def send_json(self, status: int, payload: dict) -> None:
         body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
         self.send_response(status)
         self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_cors_headers()
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
         self.wfile.write(body)
@@ -187,6 +223,7 @@ class Handler(BaseHTTPRequestHandler):
         body = (GENERATOR_DIR / "activity_form.html").read_bytes()
         self.send_response(200)
         self.send_header("Content-Type", "text/html; charset=utf-8")
+        self.send_cors_headers()
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
         self.wfile.write(body)
@@ -201,6 +238,10 @@ class Handler(BaseHTTPRequestHandler):
         title = first(fields, "title").strip()
         if not record_type or not title:
             self.send_json(400, {"ok": False, "error": "Type and title are required."})
+            return
+        missing = missing_required_fields(record_type, fields, files)
+        if missing:
+            self.send_json(400, {"ok": False, "error": "Missing required fields: " + ", ".join(missing)})
             return
         record_id = first(fields, "record_id").strip() or next_record_id(record_type, title, rows)
         date, date_display, year = normalize_date(first(fields, "date").strip())

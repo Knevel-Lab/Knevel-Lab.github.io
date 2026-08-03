@@ -27,7 +27,9 @@
     .hidden { display:none; }
     .status { margin-top:14px; padding:10px 12px; border-radius:6px; background:#ecfdf3; color:#027a48; white-space:pre-wrap; }
     .status.error { background:#fef3f2; color:var(--warn); }
+    .status.warning { background:#fffaeb; color:#b54708; }
     .type-note { color:var(--muted); margin: 0 0 14px; }
+    .required-mark { color:var(--warn); margin-left:3px; }
     @media (max-width: 760px) { main { padding:16px; } .grid { grid-template-columns:1fr; } }
   </style>
 </head>
@@ -138,7 +140,7 @@
       <input type="hidden" name="notes_private" value="">
 
       <div class="full row">
-        <button type="submit" id="saveBtn">Save to CSV and regenerate site</button>
+        <button type="submit" id="saveBtn" disabled>Save to CSV and regenerate site</button>
         <button type="reset" class="secondary">Clear</button>
       </div>
     </div>
@@ -149,10 +151,72 @@
 const form = document.getElementById('activityForm');
 const typeSelect = document.getElementById('record_type');
 const statusBox = document.getElementById('status');
+const saveBtn = document.getElementById('saveBtn');
 const publicationFields = [...document.querySelectorAll('.publication-fields, .pubmed-only')];
 const imageFields = [...document.querySelectorAll('.image-fields')];
 const imageTypes = new Set(['award', 'application', 'project']);
-function setStatus(message, error=false) { statusBox.textContent = message; statusBox.className = 'status' + (error ? ' error' : ''); }
+const fieldLabels = [...document.querySelectorAll('label[for]')].reduce((labels, label) => {
+  labels[label.getAttribute('for')] = label;
+  return labels;
+}, {});
+const requiredByType = {
+  publication: ['title', 'date', 'venue', 'authors', 'citation', 'pubmed_id'],
+  talk: ['title', 'date', 'venue'],
+  invited_presentation: ['title', 'date', 'venue'],
+  public_outreach: ['title', 'date', 'venue'],
+  award: ['title', 'date', 'role', 'member_ids', 'image_file'],
+  application: ['title', 'url', 'abstract_or_description', 'image_file'],
+  project: ['title', 'url', 'abstract_or_description', 'image_file']
+};
+const requiredNames = {
+  title: 'Title',
+  date: 'Date',
+  venue: 'Venue / journal / meeting',
+  authors: 'Authors',
+  citation: 'Citation',
+  pubmed_id: 'PubMed ID',
+  role: 'Role / developer / awardee',
+  member_ids: 'Lab member(s)',
+  url: 'URL',
+  abstract_or_description: 'Abstract / description',
+  image_file: 'Image upload'
+};
+const apiBase = window.location.protocol === 'file:' ? 'http://127.0.0.1:8765' : '';
+function apiUrl(path) { return apiBase + path; }
+function setStatus(message, level='ok') {
+  statusBox.textContent = message;
+  statusBox.className = 'status' + (level === 'error' ? ' error' : level === 'warning' ? ' warning' : '');
+}
+function labelRequired(fieldId, required) {
+  const label = fieldLabels[fieldId];
+  if (!label) return;
+  let mark = label.querySelector('.required-mark');
+  if (required && !mark) {
+    mark = document.createElement('span');
+    mark.className = 'required-mark';
+    mark.textContent = '*';
+    label.appendChild(mark);
+  } else if (!required && mark) {
+    mark.remove();
+  }
+}
+function fieldHasValue(fieldId) {
+  const field = document.getElementById(fieldId);
+  if (!field) return true;
+  if (fieldId === 'image_file') return Boolean(field.files && field.files.length) || Boolean(document.getElementById('image').value.trim());
+  if (field.tagName === 'SELECT' && field.multiple) return [...field.selectedOptions].length > 0;
+  return Boolean(field.value.trim());
+}
+function missingRequiredFields() {
+  return (requiredByType[typeSelect.value] || []).filter(fieldId => !fieldHasValue(fieldId));
+}
+function updateSaveState() {
+  const required = new Set(requiredByType[typeSelect.value] || []);
+  Object.keys(fieldLabels).forEach(fieldId => labelRequired(fieldId, required.has(fieldId)));
+  const missing = missingRequiredFields();
+  saveBtn.disabled = missing.length > 0;
+  saveBtn.title = missing.length ? 'Missing: ' + missing.map(fieldId => requiredNames[fieldId] || fieldId).join(', ') : '';
+}
 function updateTypeFields() {
   const type = typeSelect.value;
   publicationFields.forEach(el => el.classList.toggle('hidden', type !== 'publication'));
@@ -167,10 +231,16 @@ function updateTypeFields() {
     project: 'e.g. SPIDERR-Horizon EU'
   };
   document.getElementById('title').placeholder = hints[type] || 'Title';
+  updateSaveState();
 }
 typeSelect.addEventListener('change', updateTypeFields);
+form.addEventListener('input', updateSaveState);
+form.addEventListener('change', updateSaveState);
 updateTypeFields();
-fetch('/api/members').then(r => r.json()).then(data => {
+if (window.location.protocol === 'file:') {
+  setStatus('This file was opened directly. PubMed lookup and Save require the local form server. Start it with: python markdown_generator\\activity_form_server.py, then use http://127.0.0.1:8765/.', 'warning');
+}
+fetch(apiUrl('/api/members')).then(r => r.json()).then(data => {
   const select = document.getElementById('member_ids');
   data.members.forEach(member => {
     const option = document.createElement('option');
@@ -178,35 +248,49 @@ fetch('/api/members').then(r => r.json()).then(data => {
     option.textContent = `${member.name} (${member.status})`;
     select.appendChild(option);
   });
+  updateSaveState();
+}).catch(() => {
+  setStatus('Cannot connect to the local form server. Start it with: python markdown_generator\\activity_form_server.py, then open http://127.0.0.1:8765/.', 'error');
 });
 document.getElementById('lookupBtn').addEventListener('click', async () => {
   const pmid = document.getElementById('pmid_lookup').value.trim();
-  if (!pmid) return setStatus('Enter a PubMed ID first.', true);
+  if (!pmid) return setStatus('Enter a PubMed ID first.', 'error');
   setStatus('Fetching PubMed data...');
-  const response = await fetch('/api/pubmed?pmid=' + encodeURIComponent(pmid));
-  const data = await response.json();
-  if (!data.ok) return setStatus(data.error, true);
-  for (const [key, value] of Object.entries(data.article)) {
-    const field = document.getElementById(key);
-    if (field) field.value = value || '';
+  try {
+    const response = await fetch(apiUrl('/api/pubmed?pmid=' + encodeURIComponent(pmid)));
+    const data = await response.json();
+    if (!data.ok) return setStatus(data.error, 'error');
+    for (const [key, value] of Object.entries(data.article)) {
+      const field = document.getElementById(key);
+      if (field) field.value = value || '';
+    }
+    updateSaveState();
+    setStatus('PubMed fields filled. Review them, choose lab members if needed, then save.');
+  } catch (error) {
+    setStatus('PubMed lookup failed. Make sure the form server is running and open http://127.0.0.1:8765/ instead of double-clicking the HTML file.', 'error');
   }
-  setStatus('PubMed fields filled. Review them, choose lab members, then save.');
 });
 form.addEventListener('submit', async event => {
   event.preventDefault();
+  const missing = missingRequiredFields();
+  if (missing.length) {
+    updateSaveState();
+    setStatus('Fill required fields first: ' + missing.map(fieldId => requiredNames[fieldId] || fieldId).join(', '), 'error');
+    return;
+  }
   setStatus('Saving CSV and regenerating site...');
-  document.getElementById('saveBtn').disabled = true;
+  saveBtn.disabled = true;
   try {
-    const response = await fetch('/api/save', { method: 'POST', body: new FormData(form) });
+    const response = await fetch(apiUrl('/api/save'), { method: 'POST', body: new FormData(form) });
     const data = await response.json();
     if (!data.ok) throw new Error(data.error || 'Save failed');
     setStatus(`Saved ${data.record_id}.\nImage: ${data.image || '(none)'}\n${data.output || ''}`);
     form.reset();
     updateTypeFields();
   } catch (error) {
-    setStatus(error.message, true);
+    setStatus(error.message, 'error');
   } finally {
-    document.getElementById('saveBtn').disabled = false;
+    updateSaveState();
   }
 });
 </script>
