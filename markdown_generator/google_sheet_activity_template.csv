@@ -1,0 +1,4 @@
+﻿record_type,member_ids,title,date,venue,location,role,url,abstract_or_description,image,visibility,submission_id
+award,daniyal_selani,Digital Rheumatology Days second prize,2026-03-22,Digital Rheumatology Days,,Awardee: Daniyal Selani,https://example.org,Daniyal won second prize at the Digital Rheumatology Days.,https://drive.google.com/file/d/FILE_ID/view,public,example-001
+talk,rachel_knevel,SPIDERR: prediction triage and care pathways on the road to RA,2026-06,EULAR,Barcelona,Invited speaker,,Invited presentation at the EULAR Study Group for Risk Factors for RA.,,public,example-002
+application,lab,Rheumalyze,,GitHub,,Developed by Knevel Lab,https://github.com/Knevel-Lab/rheumalyze,Application description here.,https://drive.google.com/file/d/FILE_ID/view,public,example-003

@@ -1,14 +1,14 @@
 name: Website activity submission
-description: Submit a publication, talk, award, application, or project for the Knevel Lab website.
+description: Submit a talk, outreach item, award, application, or project for the Knevel Lab website.
 title: "Website activity: <short title>"
 labels: ["website-activity"]
 body:
   - type: markdown
     attributes:
       value: |
-        Use this form to submit one website item. A maintainer or GitHub Action can convert the issue into a pull request; the website is updated only after that PR is reviewed and merged.
+        Use this form to submit one non-publication website item. Publications are intentionally excluded and should be handled by the separate PubMed automation.
 
-        For publications, a PubMed ID is usually enough. Fill extra fields only when PubMed is missing something or the website should use a specific wording.
+        The preferred lab-member workflow is Google Form / Google Sheet. This GitHub Issue Form remains available as a fallback for maintainers.
 
         For Awards, Applications, and Projects, paste one image URL or drag one image into the image field and keep the generated GitHub attachment URL.
 
@@ -34,7 +34,6 @@ body:
     attributes:
       label: Type
       options:
-        - publication
         - talk
         - invited_presentation
         - public_outreach
@@ -57,21 +56,24 @@ body:
     id: title
     attributes:
       label: Title
-      description: Required for non-publication items. For publications, PubMed ID can fill this automatically.
-      placeholder: Rheumatoid arthritis susceptibility genes show pathotype-specific expression...
+      placeholder: "SPIDERR: prediction triage and care pathways on the road to RA"
+    validations:
+      required: true
 
   - type: input
     id: date
     attributes:
       label: Date
-      description: Required for non-publication items. Use YYYY-MM-DD when possible. PubMed can fill publication dates.
+      description: Use YYYY-MM-DD when possible. Year or YYYY Mon is also accepted.
       placeholder: 2026-07-24
+    validations:
+      required: true
 
   - type: input
     id: venue
     attributes:
-      label: Venue / journal / meeting
-      placeholder: Ann Rheum Dis, EULAR, Digital Rheumatology Days
+      label: Venue / meeting
+      placeholder: EULAR, Digital Rheumatology Days
 
   - type: input
     id: location
@@ -86,40 +88,16 @@ body:
       placeholder: Invited speaker, awardee, Developed by Jane Doe
 
   - type: input
-    id: pubmed_id
-    attributes:
-      label: PubMed ID
-      placeholder: 42498579
-
-  - type: input
-    id: doi
-    attributes:
-      label: DOI
-      placeholder: 10.1016/j.ard.2026.06.032
-
-  - type: input
     id: url
     attributes:
       label: URL
-      placeholder: https://doi.org/10.xxxx/yyyy
-
-  - type: textarea
-    id: authors
-    attributes:
-      label: Authors
-      placeholder: den Hond IC, Reinders MJT, Knevel R
-
-  - type: textarea
-    id: citation
-    attributes:
-      label: Citation
-      placeholder: Leave blank for PubMed-based publication citation.
+      placeholder: https://example.org/item
 
   - type: textarea
     id: abstract_or_description
     attributes:
-      label: Abstract / description
-      placeholder: Short website description. For publications, leave blank to use PubMed abstract when available.
+      label: Description
+      placeholder: Short website description.
 
   - type: textarea
     id: image

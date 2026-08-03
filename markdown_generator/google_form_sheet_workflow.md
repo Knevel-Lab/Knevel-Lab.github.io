@@ -1,0 +1,78 @@
+﻿# Google Form / Google Sheet Website Workflow
+
+This is the preferred lab-member submission workflow. It does not require the maintainer's local checkout for routine updates.
+
+## Scope
+
+Lab members submit only non-publication website items:
+
+- `talk`
+- `invited_presentation`
+- `public_outreach`
+- `award`
+- `application`
+- `project`
+
+`publication` is intentionally excluded from the Google Form. Publications should be handled by a separate PubMed-based automation so lab members do not enter publication metadata manually.
+
+## One-time Google setup
+
+1. Open <https://script.google.com/> with the Google account that should own the form and response sheet.
+2. Create a new Apps Script project.
+3. Paste the contents of `markdown_generator/google_form_setup.gs`.
+4. Run `createKnevelWebsiteActivityForm()`.
+5. Approve the Google permissions.
+6. Copy the logged Form public URL and Response Sheet URL.
+7. Share the Response Sheet with the GitHub Actions service account email if the workflow will use private Google access.
+
+A plain CSV template is also available at:
+
+- `markdown_generator/google_sheet_activity_template.csv`
+
+## GitHub setup
+
+The maintainer-triggered GitHub Actions workflow is stored disabled at:
+
+- `.github/workflows/google-sheet-activity-import.yml.disabled`
+
+It is disabled by default because it needs repository write permissions to create PRs. To enable after maintainer approval, rename it to:
+
+- `.github/workflows/google-sheet-activity-import.yml`
+
+Required repository configuration:
+
+- Repository variable `GOOGLE_SHEET_ID`: the raw spreadsheet ID from the response sheet URL.
+- Repository secret `GOOGLE_SERVICE_ACCOUNT_JSON`: JSON key for a Google service account with read access to the response sheet and uploaded image files.
+
+The workflow uses Google Drive read-only scope and creates a PR; it does not push directly to `master`.
+
+## Routine operation
+
+1. Lab member submits the Google Form.
+2. Maintainer opens GitHub Actions.
+3. Run `Import Google Sheet website activities` manually.
+4. The workflow downloads the response sheet as CSV.
+5. `markdown_generator/import_activity_sheet.py` imports new rows into `markdown_generator/member_activity_records.csv`.
+6. `markdown_generator/generate_site_content.py --check --generate-site` regenerates website files.
+7. The workflow opens a PR.
+8. Maintainer reviews and merges the PR.
+
+## Images
+
+For Awards, Applications, and Projects, the form supports one image.
+
+Preferred options:
+
+- Use the Google Form file upload question, then let the workflow download the Drive file into `images/`.
+- Or paste a public image URL into the `image` field. The generated site can render HTTP(S) image URLs directly.
+
+If using Google Form file upload, respondents may need to sign in depending on the Google Workspace settings.
+
+## Local dry-run commands
+
+These are for development only; routine operation should use GitHub Actions.
+
+```sh
+python markdown_generator/import_activity_sheet.py --sheet-csv markdown_generator/google_sheet_activity_template.csv --dry-run
+python markdown_generator/generate_site_content.py --check --generate-site
+```

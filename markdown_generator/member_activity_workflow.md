@@ -147,3 +147,17 @@ To enable it after maintainer approval:
 4. Review every generated PR before merge.
 
 The workflow does not push directly to `master`; it creates a reviewable PR branch.
+
+## Preferred Google Form / Google Sheet workflow
+
+The preferred lab-member workflow is documented in:
+
+- `markdown_generator/google_form_sheet_workflow.md`
+
+In this workflow, lab members submit talks, outreach, awards, applications, and projects through Google Form. Publications are intentionally excluded from the form and should be handled by separate PubMed automation.
+
+The GitHub Actions workflow for importing Google Sheet responses is present but disabled by default:
+
+- `.github/workflows/google-sheet-activity-import.yml.disabled`
+
+Enable it only after maintainers approve the required PR-creation permissions.
