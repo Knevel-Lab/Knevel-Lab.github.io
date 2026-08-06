@@ -88,7 +88,7 @@ function addActivitySection_(form, memberChoices) {
     .setRequired(true);
   form.addTextItem()
     .setTitle('date')
-    .setHelpText('Use DD-MM-YYYY if possible. YYYY or Mon YYYY is also accepted.')
+    .setHelpText('Use DD-MM-YYYY if possible, e.g. 12-08-2026. YYYY or Mon YYYY is also accepted. Avoid slash dates because Google Sheets can display them ambiguously.')
     .setRequired(true);
   form.addTextItem()
     .setTitle('venue')

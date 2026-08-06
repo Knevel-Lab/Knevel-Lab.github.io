@@ -4,7 +4,7 @@ This is the preferred lab-member submission workflow. It does not require the ma
 
 ## Scope
 
-The Google Form uses section branching. Lab members first choose the item type, then see only the questions needed for that type. Publication submissions show only PubMed ID and DOI fields; all other publication metadata is filled from PubMed by the importer. Lab members submit these website items:
+The Google Form uses section branching. Lab members first choose the item type. Publications use a dedicated PubMed/DOI section; all other website activities use one shared details section. Publication submissions show only PubMed ID and DOI fields; all other publication metadata is filled from PubMed by the importer. Lab members submit these website items:
 
 - `talk`
 - `invited_presentation`
@@ -31,11 +31,7 @@ A plain CSV template is also available at:
 
 ## GitHub setup
 
-The maintainer-triggered GitHub Actions workflow is stored disabled at:
-
-- `.github/workflows/google-sheet-activity-import.yml.disabled`
-
-It is disabled by default because it needs repository write permissions to create PRs. To enable after maintainer approval, rename it to:
+The maintainer-triggered GitHub Actions workflow is enabled at:
 
 - `.github/workflows/google-sheet-activity-import.yml`
 
@@ -59,13 +55,11 @@ The workflow uses Google Drive read-only scope and creates a PR; it does not pus
 
 ## Images
 
-For Awards, Applications, and Projects, the relevant section supports one image. Talk, invited presentation, and outreach sections do not show image questions.
+The shared non-publication section supports one optional image for any activity type. Talk, invited presentation, and outreach submissions can leave it blank.
 
-Google Forms can accept local PC uploads through a File upload question, but Apps Script and the Google Forms API cannot create that question automatically. After running `createKnevelWebsiteActivityForm()`, open the Form edit URL and manually change these existing Paragraph questions to File upload questions:
+Google Forms can accept local PC uploads through a File upload question, but Apps Script and the Google Forms API cannot create that question automatically. After running `createKnevelWebsiteActivityForm()`, open the Form edit URL and manually change this existing Paragraph question to a File upload question:
 
-- Award section: `award_image`
-- Application section: `application_image`
-- Project section: `project_image`
+- Shared activity section: `image`
 
 For each converted File upload question:
 
@@ -74,11 +68,11 @@ For each converted File upload question:
 - restrict file type to image;
 - leave it optional unless every submission of that type must include an image.
 
-Respondents will then see the normal local PC file picker. The importer already recognizes these exact column names and can download the uploaded Drive files when the GitHub workflow is configured with Google credentials.
+Respondents will then see the normal local PC file picker. The importer already recognizes this exact column name and can download the uploaded Drive files when the GitHub workflow is configured with Google credentials.
 
 Fallback option:
 
-- Keep the question as Paragraph and paste a public image URL into the `*_image` field. The generated site can render HTTP(S) image URLs directly.
+- Keep the question as Paragraph and paste a public image URL into the `image` field. The generated site can render HTTP(S) image URLs directly.
 
 If using Google Form file upload, respondents may need to sign in depending on the Google Workspace settings.
 
@@ -90,6 +84,10 @@ These are for development only; routine operation should use GitHub Actions.
 python markdown_generator/import_activity_sheet.py --sheet-csv markdown_generator/google_sheet_activity_template.csv --dry-run
 python markdown_generator/generate_site_content.py --check --generate-site
 ```
+
+## Date fields
+
+Use `DD-MM-YYYY` with hyphens for manually entered dates, for example `12-08-2026`. The importer also accepts Google Sheets slash exports such as `8/12/2026`, interpreting slash dates as `MM/DD/YYYY` because that is how Google Sheets commonly exports date-formatted cells.
 
 ## Required fields
 
