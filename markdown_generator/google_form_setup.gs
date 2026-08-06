@@ -56,6 +56,10 @@ function createKnevelWebsiteActivityForm() {
   const projectPage = form.addPageBreakItem().setTitle('Project');
   addLinkedItemSection_(form, memberChoices, 'project', 'Project name', 'Project URL', true);
 
+  [publicationPage, talkPage, invitedPage, outreachPage, awardPage, applicationPage, projectPage].forEach((page) =>
+    page.setGoToPage(FormApp.PageNavigationType.SUBMIT)
+  );
+
   typeItem.setChoices([
     typeItem.createChoice('publication', publicationPage),
     typeItem.createChoice('talk', talkPage),
