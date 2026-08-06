@@ -96,6 +96,8 @@ python markdown_generator/generate_site_content.py --check --generate-site
 The branched Google Form uses different required fields per section:
 
 - Publication: PubMed ID or DOI. PubMed ID is preferred; DOI is fallback. No title/authors/journal/citation fields are shown.
-- Talk / invited presentation / public outreach: member IDs, title, date, venue, visibility.
-- Award: member IDs, title, date, awardee/role, description, visibility; optional venue, location, URL, and one image.
-- Application / project: member IDs, title, URL, description, visibility; optional role, date, venue, and one image.
+- Talk / invited presentation / public outreach: member IDs, title, date, venue.
+- Award: member IDs, title, date, awardee/role, description; optional venue, location, URL, and one image.
+- Application / project: member IDs, title, URL, description; optional role, date, venue, and one image.
+
+Note: Google Form submissions no longer ask lab members for visibility. The importer defaults new submissions to public; maintainers can edit member_activity_records.csv manually if a row should be hidden.

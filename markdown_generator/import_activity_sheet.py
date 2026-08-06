@@ -155,12 +155,12 @@ def normalize_date(raw: str) -> tuple[str, str, str]:
     raw = clean(raw)
     if not raw:
         return "", "", ""
-    for fmt in ("%Y-%m-%d", "%Y/%m/%d", "%d/%m/%Y", "%m/%d/%Y", "%Y %b %d", "%Y %B %d", "%Y %b", "%Y %B", "%Y"):
+    for fmt in ("%d-%m-%Y", "%Y-%m-%d", "%Y/%m/%d", "%d/%m/%Y", "%m/%d/%Y", "%d %b %Y", "%d %B %Y", "%b %Y", "%B %Y", "%Y %b %d", "%Y %B %d", "%Y %b", "%Y %B", "%Y"):
         try:
             dt = datetime.strptime(raw, fmt)
             if fmt == "%Y":
                 return raw, raw, raw
-            if fmt in {"%Y %b", "%Y %B"}:
+            if fmt in {"%Y %b", "%Y %B", "%b %Y", "%B %Y"}:
                 return dt.strftime("%Y-%m"), dt.strftime("%Y %b"), dt.strftime("%Y")
             return dt.strftime("%Y-%m-%d"), dt.strftime("%Y %b %d").replace(" 0", " "), dt.strftime("%Y")
         except ValueError:

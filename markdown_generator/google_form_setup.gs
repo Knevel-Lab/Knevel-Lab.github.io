@@ -91,12 +91,6 @@ function addMembers_(form, title, choices) {
     .setRequired(true);
 }
 
-function addVisibility_(form, prefix) {
-  return form.addListItem()
-    .setTitle(prefix + '_visibility')
-    .setChoiceValues(['public', 'hidden'])
-    .setRequired(true);
-}
 
 function addTalkSection_(form, memberChoices, prefix) {
   addMembers_(form, prefix + '_member_ids', memberChoices);
@@ -106,7 +100,7 @@ function addTalkSection_(form, memberChoices, prefix) {
     .setRequired(true);
   form.addTextItem()
     .setTitle(prefix + '_date')
-    .setHelpText('Use YYYY-MM-DD if possible. YYYY or YYYY Mon is also accepted.')
+    .setHelpText('Use DD-MM-YYYY if possible. YYYY or Mon YYYY is also accepted.')
     .setRequired(true);
   form.addTextItem()
     .setTitle(prefix + '_venue')
@@ -128,7 +122,6 @@ function addTalkSection_(form, memberChoices, prefix) {
     .setTitle(prefix + '_abstract_or_description')
     .setHelpText('Optional short description.')
     .setRequired(false);
-  addVisibility_(form, prefix);
 }
 
 function addAwardSection_(form, memberChoices) {
@@ -140,7 +133,7 @@ function addAwardSection_(form, memberChoices) {
     .setRequired(true);
   form.addTextItem()
     .setTitle(prefix + '_date')
-    .setHelpText('Use YYYY-MM-DD if possible. YYYY or YYYY Mon is also accepted.')
+    .setHelpText('Use DD-MM-YYYY if possible. YYYY or Mon YYYY is also accepted.')
     .setRequired(true);
   form.addTextItem()
     .setTitle(prefix + '_role')
@@ -163,7 +156,6 @@ function addAwardSection_(form, memberChoices) {
     .setHelpText('Optional information link.')
     .setRequired(false);
   addImageQuestions_(form, prefix);
-  addVisibility_(form, prefix);
 }
 
 function addLinkedItemSection_(form, memberChoices, prefix, titleHelp, urlHelp, includeImage) {
@@ -186,7 +178,7 @@ function addLinkedItemSection_(form, memberChoices, prefix, titleHelp, urlHelp, 
     .setRequired(false);
   form.addTextItem()
     .setTitle(prefix + '_date')
-    .setHelpText('Optional. Use YYYY-MM-DD if relevant.')
+    .setHelpText('Optional. Use DD-MM-YYYY if relevant.')
     .setRequired(false);
   form.addTextItem()
     .setTitle(prefix + '_venue')
@@ -195,7 +187,6 @@ function addLinkedItemSection_(form, memberChoices, prefix, titleHelp, urlHelp, 
   if (includeImage) {
     addImageQuestions_(form, prefix);
   }
-  addVisibility_(form, prefix);
 }
 
 function addImageQuestions_(form, prefix) {
