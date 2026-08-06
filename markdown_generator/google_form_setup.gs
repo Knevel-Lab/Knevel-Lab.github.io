@@ -21,6 +21,7 @@ function createKnevelWebsiteActivityForm() {
     ['mick_blikman', 'Mick Blikman'],
     ['qingshuang_xie', 'Qingshuang Xie'],
     ['david_steeman', 'David Steeman'],
+    ['erik_van_den_akker', 'Erik van den Akker'],
     ['lab', 'Lab-wide item'],
   ];
   const memberChoices = members.map(([id, name]) => `${id} = ${name}`);
@@ -70,7 +71,7 @@ function createKnevelWebsiteActivityForm() {
   Logger.log('Form edit URL: ' + form.getEditUrl());
   Logger.log('Form public URL: ' + form.getPublishedUrl());
   Logger.log('Response Sheet URL: ' + sheet.getUrl());
-  Logger.log('Manual file upload setup required: add File upload questions named award_image_upload, application_image_upload, and project_image_upload in the Google Form editor.');
+  Logger.log('Manual file upload setup: in the Google Form editor, change award_image, application_image, and project_image question type from Paragraph to File upload if local PC uploads are needed.');
 }
 function addPublicationSection_(form) {
   form.addTextItem()
@@ -200,10 +201,6 @@ function addLinkedItemSection_(form, memberChoices, prefix, titleHelp, urlHelp, 
 function addImageQuestions_(form, prefix) {
   form.addParagraphTextItem()
     .setTitle(prefix + '_image')
-    .setHelpText('Optional image URL. Leave blank if the maintainer has added the manual File upload question named ' + prefix + '_image_upload below.')
+    .setHelpText('Optional image. Maintainer setup: if local PC upload is needed, change this question type from Paragraph to File upload in the Google Form editor, keep this exact title, allow 1 file, and restrict file type to image.')
     .setRequired(false);
-
-  form.addSectionHeaderItem()
-    .setTitle(prefix + '_image_upload')
-    .setHelpText('Maintainer setup note: Google Apps Script cannot create File upload questions. In the form editor, manually add a File upload question directly below this note, title it exactly ' + prefix + '_image_upload, allow 1 file, and restrict file type to image. Respondents will then be able to choose a file from their local PC.');
 }

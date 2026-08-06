@@ -61,14 +61,15 @@ The workflow uses Google Drive read-only scope and creates a PR; it does not pus
 
 For Awards, Applications, and Projects, the relevant section supports one image. Talk, invited presentation, and outreach sections do not show image questions.
 
-Google Forms can accept local PC uploads through a File upload question, but Apps Script and the Google Forms API cannot create that question automatically. After running `createKnevelWebsiteActivityForm()`, open the Form edit URL and manually add these File upload questions directly below the matching setup note:
+Google Forms can accept local PC uploads through a File upload question, but Apps Script and the Google Forms API cannot create that question automatically. After running `createKnevelWebsiteActivityForm()`, open the Form edit URL and manually change these existing Paragraph questions to File upload questions:
 
-- Award section: `award_image_upload`
-- Application section: `application_image_upload`
-- Project section: `project_image_upload`
+- Award section: `award_image`
+- Application section: `application_image`
+- Project section: `project_image`
 
-For each File upload question:
+For each converted File upload question:
 
+- keep the exact question title unchanged;
 - allow 1 file;
 - restrict file type to image;
 - leave it optional unless every submission of that type must include an image.
@@ -77,7 +78,7 @@ Respondents will then see the normal local PC file picker. The importer already 
 
 Fallback option:
 
-- Paste a public image URL into the `*_image` URL field. The generated site can render HTTP(S) image URLs directly.
+- Keep the question as Paragraph and paste a public image URL into the `*_image` field. The generated site can render HTTP(S) image URLs directly.
 
 If using Google Form file upload, respondents may need to sign in depending on the Google Workspace settings.
 

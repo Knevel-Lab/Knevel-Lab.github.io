@@ -90,6 +90,7 @@ TYPE_ALIASES = {
 }
 TYPE_PREFIXES = ("publication", "talk", "invited_presentation", "public_outreach", "award", "application", "project")
 COMMON_SUFFIXES = ("member_ids", "title", "date", "venue", "location", "role", "url", "abstract_or_description", "image", "image_upload", "visibility", "pubmed_id", "doi", "authors", "citation")
+EXTRA_MEMBER_NAMES = {"erik_van_den_akker": "Erik van den Akker"}
 IMAGE_EXT_BY_MIME = {
     "image/jpeg": ".jpg",
     "image/png": ".png",
@@ -206,6 +207,7 @@ def normalize_member_ids(value: str) -> str:
 
 def member_names(member_ids: str) -> str:
     members = {row["member_id"]: row["name"] for row in read_csv(MEMBERS_CSV)}
+    members.update(EXTRA_MEMBER_NAMES)
     ids = [value.strip() for value in re.split(r"[;,]\s*", member_ids or "") if value.strip()]
     if not ids or ids == ["lab"]:
         return "Knevel Lab"
