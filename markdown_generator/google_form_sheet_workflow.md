@@ -91,13 +91,11 @@ python markdown_generator/import_activity_sheet.py --sheet-csv markdown_generato
 python markdown_generator/generate_site_content.py --check --generate-site
 ```
 
-## Type-specific required fields
+## Required fields
 
-The branched Google Form uses different required fields per section:
+The Google Form has one Publication section and one shared non-publication activity section:
 
 - Publication: PubMed ID or DOI. PubMed ID is preferred; DOI is fallback. No title/authors/journal/citation fields are shown.
-- Talk / invited presentation / public outreach: member IDs, title, date, venue.
-- Award: member IDs, title, date, awardee/role, description; optional venue, location, URL, and one image.
-- Application / project: member IDs, title, URL, description; optional role, date, venue, and one image.
+- Talk / invited presentation / public outreach / award / application / project: record type, member IDs, title, date, and venue are required. Location, role, URL, description, and one image are optional.
 
 Note: Google Form submissions no longer ask lab members for visibility. The importer defaults new submissions to public; maintainers can edit member_activity_records.csv manually if a row should be hidden.

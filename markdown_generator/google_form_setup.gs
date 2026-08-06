@@ -32,49 +32,35 @@ function createKnevelWebsiteActivityForm() {
 
   const typeItem = form.addMultipleChoiceItem()
     .setTitle('record_type')
-    .setHelpText('Choose one. Publication requires only PubMed ID or DOI.')
+    .setHelpText('Choose one. Publication requires only PubMed ID or DOI. All other types use the shared activity details page.')
     .setRequired(true);
 
   const publicationPage = form.addPageBreakItem().setTitle('Publication');
   addPublicationSection_(form);
 
-  const talkPage = form.addPageBreakItem().setTitle('Talk / presentation');
-  addTalkSection_(form, memberChoices, 'talk');
+  const activityPage = form.addPageBreakItem().setTitle('Website activity details');
+  addActivitySection_(form, memberChoices);
 
-  const invitedPage = form.addPageBreakItem().setTitle('Invited presentation');
-  addTalkSection_(form, memberChoices, 'invited_presentation');
-
-  const outreachPage = form.addPageBreakItem().setTitle('Public outreach');
-  addTalkSection_(form, memberChoices, 'public_outreach');
-
-  const awardPage = form.addPageBreakItem().setTitle('Award');
-  addAwardSection_(form, memberChoices);
-
-  const applicationPage = form.addPageBreakItem().setTitle('Application');
-  addLinkedItemSection_(form, memberChoices, 'application', 'Application name', 'Application URL', true);
-
-  const projectPage = form.addPageBreakItem().setTitle('Project');
-  addLinkedItemSection_(form, memberChoices, 'project', 'Project name', 'Project URL', true);
-
-  [publicationPage, talkPage, invitedPage, outreachPage, awardPage, applicationPage, projectPage].forEach((page) =>
+  [publicationPage, activityPage].forEach((page) =>
     page.setGoToPage(FormApp.PageNavigationType.SUBMIT)
   );
 
   typeItem.setChoices([
     typeItem.createChoice('publication', publicationPage),
-    typeItem.createChoice('talk', talkPage),
-    typeItem.createChoice('invited_presentation', invitedPage),
-    typeItem.createChoice('public_outreach', outreachPage),
-    typeItem.createChoice('award', awardPage),
-    typeItem.createChoice('application', applicationPage),
-    typeItem.createChoice('project', projectPage),
+    typeItem.createChoice('talk', activityPage),
+    typeItem.createChoice('invited_presentation', activityPage),
+    typeItem.createChoice('public_outreach', activityPage),
+    typeItem.createChoice('award', activityPage),
+    typeItem.createChoice('application', activityPage),
+    typeItem.createChoice('project', activityPage),
   ]);
 
   Logger.log('Form edit URL: ' + form.getEditUrl());
   Logger.log('Form public URL: ' + form.getPublishedUrl());
   Logger.log('Response Sheet URL: ' + sheet.getUrl());
-  Logger.log('Manual file upload setup: in the Google Form editor, change award_image, application_image, and project_image question type from Paragraph to File upload if local PC uploads are needed.');
+  Logger.log('Manual file upload setup: in the Google Form editor, change the image question type from Paragraph to File upload if local PC uploads are needed. Keep the exact title image, allow 1 file, and restrict file type to image.');
 }
+
 function addPublicationSection_(form) {
   form.addTextItem()
     .setTitle('publication_pubmed_id')
@@ -85,6 +71,7 @@ function addPublicationSection_(form) {
     .setHelpText('Use only when PubMed ID is unknown. The importer will resolve DOI to PubMed when possible.')
     .setRequired(false);
 }
+
 function addMembers_(form, title, choices) {
   return form.addCheckboxItem()
     .setTitle(title)
@@ -93,107 +80,42 @@ function addMembers_(form, title, choices) {
     .setRequired(true);
 }
 
-
-function addTalkSection_(form, memberChoices, prefix) {
-  addMembers_(form, prefix + '_member_ids', memberChoices);
+function addActivitySection_(form, memberChoices) {
+  addMembers_(form, 'member_ids', memberChoices);
   form.addTextItem()
-    .setTitle(prefix + '_title')
+    .setTitle('title')
     .setHelpText('Title as it should appear on the website.')
     .setRequired(true);
   form.addTextItem()
-    .setTitle(prefix + '_date')
+    .setTitle('date')
     .setHelpText('Use DD-MM-YYYY if possible. YYYY or Mon YYYY is also accepted.')
     .setRequired(true);
   form.addTextItem()
-    .setTitle(prefix + '_venue')
-    .setHelpText('Meeting, event, or outlet name.')
+    .setTitle('venue')
+    .setHelpText('Meeting, event, award body, organization, host, funder, or outlet name.')
     .setRequired(true);
   form.addTextItem()
-    .setTitle(prefix + '_location')
-    .setHelpText('City, country, or online.')
+    .setTitle('location')
+    .setHelpText('Optional city, country, or online.')
     .setRequired(false);
   form.addTextItem()
-    .setTitle(prefix + '_role')
-    .setHelpText('Presenter, invited speaker, panelist, etc.')
+    .setTitle('role')
+    .setHelpText('Optional presenter, invited speaker, awardee, developer, collaborator, funder, or other role.')
     .setRequired(false);
   form.addTextItem()
-    .setTitle(prefix + '_url')
+    .setTitle('url')
     .setHelpText('Optional relevant link.')
     .setRequired(false);
   form.addParagraphTextItem()
-    .setTitle(prefix + '_abstract_or_description')
-    .setHelpText('Optional short description.')
+    .setTitle('abstract_or_description')
+    .setHelpText('Optional short website text or description.')
     .setRequired(false);
+  addImageQuestions_(form);
 }
 
-function addAwardSection_(form, memberChoices) {
-  const prefix = 'award';
-  addMembers_(form, prefix + '_member_ids', memberChoices);
-  form.addTextItem()
-    .setTitle(prefix + '_title')
-    .setHelpText('Award name as it should appear on the website.')
-    .setRequired(true);
-  form.addTextItem()
-    .setTitle(prefix + '_date')
-    .setHelpText('Use DD-MM-YYYY if possible. YYYY or Mon YYYY is also accepted.')
-    .setRequired(true);
-  form.addTextItem()
-    .setTitle(prefix + '_role')
-    .setHelpText('Awardee and short role, e.g. Awardee: Georgy Gomon.')
-    .setRequired(true);
+function addImageQuestions_(form) {
   form.addParagraphTextItem()
-    .setTitle(prefix + '_abstract_or_description')
-    .setHelpText('Short website text, e.g. what was awarded and why.')
-    .setRequired(true);
-  form.addTextItem()
-    .setTitle(prefix + '_venue')
-    .setHelpText('Award body, congress, or event name.')
-    .setRequired(false);
-  form.addTextItem()
-    .setTitle(prefix + '_location')
-    .setHelpText('City, country, or online.')
-    .setRequired(false);
-  form.addTextItem()
-    .setTitle(prefix + '_url')
-    .setHelpText('Optional information link.')
-    .setRequired(false);
-  addImageQuestions_(form, prefix);
-}
-
-function addLinkedItemSection_(form, memberChoices, prefix, titleHelp, urlHelp, includeImage) {
-  addMembers_(form, prefix + '_member_ids', memberChoices);
-  form.addTextItem()
-    .setTitle(prefix + '_title')
-    .setHelpText(titleHelp)
-    .setRequired(true);
-  form.addTextItem()
-    .setTitle(prefix + '_url')
-    .setHelpText(urlHelp)
-    .setRequired(true);
-  form.addParagraphTextItem()
-    .setTitle(prefix + '_abstract_or_description')
-    .setHelpText('Short text to show on the website.')
-    .setRequired(true);
-  form.addTextItem()
-    .setTitle(prefix + '_role')
-    .setHelpText('Developer, collaborator, funder, or role shown below the description.')
-    .setRequired(false);
-  form.addTextItem()
-    .setTitle(prefix + '_date')
-    .setHelpText('Optional. Use DD-MM-YYYY if relevant.')
-    .setRequired(false);
-  form.addTextItem()
-    .setTitle(prefix + '_venue')
-    .setHelpText('Optional host, funder, or organization.')
-    .setRequired(false);
-  if (includeImage) {
-    addImageQuestions_(form, prefix);
-  }
-}
-
-function addImageQuestions_(form, prefix) {
-  form.addParagraphTextItem()
-    .setTitle(prefix + '_image')
+    .setTitle('image')
     .setHelpText('Optional image. Maintainer setup: if local PC upload is needed, change this question type from Paragraph to File upload in the Google Form editor, keep this exact title, allow 1 file, and restrict file type to image.')
     .setRequired(false);
 }

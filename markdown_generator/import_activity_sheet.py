@@ -35,12 +35,12 @@ FIELDS = [
 ALLOWED_TYPES = {"publication", "talk", "invited_presentation", "public_outreach", "award", "application", "project"}
 REQUIRED_BY_TYPE = {
     "publication": [],
-    "talk": ["title", "date", "venue"],
-    "invited_presentation": ["title", "date", "venue"],
-    "public_outreach": ["title", "date", "venue"],
-    "award": ["title", "date", "role", "member_ids"],
-    "application": ["title", "url", "abstract_or_description"],
-    "project": ["title", "url", "abstract_or_description"],
+    "talk": ["member_ids", "title", "date", "venue"],
+    "invited_presentation": ["member_ids", "title", "date", "venue"],
+    "public_outreach": ["member_ids", "title", "date", "venue"],
+    "award": ["member_ids", "title", "date", "venue"],
+    "application": ["member_ids", "title", "date", "venue"],
+    "project": ["member_ids", "title", "date", "venue"],
 }
 COLUMN_ALIASES = {
     "timestamp": "timestamp",
