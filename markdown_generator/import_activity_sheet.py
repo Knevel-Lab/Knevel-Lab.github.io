@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 """Import lab-member activity rows exported from Google Sheets.
 
-The Google Form / Sheet workflow intentionally excludes publications. Publications
-should be handled by a separate PubMed-based automation, while lab members submit
-only talks, outreach, awards, applications, and projects.
+Publication rows contain only PubMed ID and/or DOI; this importer fetches PubMed
+metadata after submission. Other activity types are imported from type-specific
+Google Form sections.
 """
 from __future__ import annotations
 
@@ -17,6 +17,7 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
+import xml.etree.ElementTree as ET
 from datetime import datetime
 from pathlib import Path
 
@@ -31,8 +32,9 @@ FIELDS = [
     "venue", "location", "role", "authors", "citation", "doi", "url", "pubmed_id",
     "abstract_or_description", "image", "visibility", "featured", "source_file", "permalink", "notes_private",
 ]
-ALLOWED_TYPES = {"talk", "invited_presentation", "public_outreach", "award", "application", "project"}
+ALLOWED_TYPES = {"publication", "talk", "invited_presentation", "public_outreach", "award", "application", "project"}
 REQUIRED_BY_TYPE = {
+    "publication": [],
     "talk": ["title", "date", "venue"],
     "invited_presentation": ["title", "date", "venue"],
     "public_outreach": ["title", "date", "venue"],
@@ -84,9 +86,10 @@ TYPE_ALIASES = {
     "application": "application",
     "project": "project",
     "publication": "publication",
+    "pubmed": "publication",
 }
-TYPE_PREFIXES = ("talk", "invited_presentation", "public_outreach", "award", "application", "project")
-COMMON_SUFFIXES = ("member_ids", "title", "date", "venue", "location", "role", "url", "abstract_or_description", "image", "image_upload", "visibility")
+TYPE_PREFIXES = ("publication", "talk", "invited_presentation", "public_outreach", "award", "application", "project")
+COMMON_SUFFIXES = ("member_ids", "title", "date", "venue", "location", "role", "url", "abstract_or_description", "image", "image_upload", "visibility", "pubmed_id", "doi", "authors", "citation")
 IMAGE_EXT_BY_MIME = {
     "image/jpeg": ".jpg",
     "image/png": ".png",
@@ -217,6 +220,7 @@ def next_record_id(record_type: str, title: str, existing: list[dict[str, str]])
         "award": "award",
         "application": "application",
         "project": "project",
+        "publication": "pub",
     }.get(record_type, "record")
     base = f"{prefix}_{slugify(title)}"
     used = {row.get("record_id", "") for row in existing}
@@ -288,33 +292,129 @@ def download_drive_image(image_value: str, record_id: str, token: str) -> str:
         (IMAGES_DIR / filename).write_bytes(response.read())
     return filename
 
+def doi_to_pubmed_id(doi: str) -> str:
+    doi = clean(doi)
+    if not doi:
+        return ""
+    query = urllib.parse.urlencode({"db": "pubmed", "term": f"{doi}[AID]", "retmode": "xml"})
+    url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?" + query
+    request = urllib.request.Request(url, headers={"User-Agent": "KnevelLabWebsiteSheetImporter/1.0"})
+    with urllib.request.urlopen(request, timeout=20) as response:
+        root = ET.fromstring(response.read())
+    return root.findtext(".//IdList/Id", default="").strip()
+
+
+def pubmed_lookup(pubmed_id: str = "", doi: str = "") -> dict[str, str]:
+    pubmed_id = re.sub(r"\D", "", pubmed_id or "")
+    doi = clean(doi)
+    if not pubmed_id and doi:
+        pubmed_id = doi_to_pubmed_id(doi)
+    if not pubmed_id:
+        raise ValueError("Publication requires either PubMed ID or DOI that can be resolved in PubMed.")
+    url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?" + urllib.parse.urlencode({"db": "pubmed", "id": pubmed_id, "retmode": "xml"})
+    request = urllib.request.Request(url, headers={"User-Agent": "KnevelLabWebsiteSheetImporter/1.0"})
+    with urllib.request.urlopen(request, timeout=20) as response:
+        root = ET.fromstring(response.read())
+    article = root.find(".//PubmedArticle")
+    if article is None:
+        raise ValueError(f"No PubMed article found for PMID {pubmed_id}.")
+    title = " ".join("".join(article.findtext(".//ArticleTitle", default="").splitlines()).split())
+    journal = article.findtext(".//Journal/ISOAbbreviation") or article.findtext(".//Journal/Title") or ""
+    year = article.findtext(".//JournalIssue/PubDate/Year") or ""
+    month = article.findtext(".//JournalIssue/PubDate/Month") or ""
+    day = article.findtext(".//JournalIssue/PubDate/Day") or ""
+    date, date_display, year_value = normalize_date(" ".join(part for part in (year, month, day) if part) or year)
+    authors = []
+    for author in article.findall(".//AuthorList/Author"):
+        collective = author.findtext("CollectiveName")
+        last = author.findtext("LastName")
+        initials = author.findtext("Initials")
+        if collective:
+            authors.append(collective)
+        elif last:
+            authors.append(f"{last} {initials or ''}".strip())
+    found_doi = ""
+    for article_id in article.findall(".//ArticleIdList/ArticleId"):
+        if article_id.attrib.get("IdType") == "doi":
+            found_doi = (article_id.text or "").strip()
+            break
+    abstract = " ".join(" ".join(node.itertext()).strip() for node in article.findall(".//Abstract/AbstractText"))
+    author_text = ", ".join(authors)
+    citation = f'{author_text}. ({year_value}) "{title}" <i>{journal}.</i>'
+    if found_doi:
+        citation += f" doi: {found_doi}."
+    return {
+        "title": title,
+        "date": date,
+        "date_display": date_display,
+        "year": year_value,
+        "venue": journal,
+        "authors": author_text,
+        "citation": citation,
+        "doi": found_doi or doi,
+        "url": f"https://doi.org/{found_doi or doi}" if (found_doi or doi) else f"https://pubmed.ncbi.nlm.nih.gov/{pubmed_id}/",
+        "pubmed_id": pubmed_id,
+        "abstract_or_description": abstract,
+    }
+
+
+def infer_publication_member_ids(authors: str) -> str:
+    author_text = " " + re.sub(r"[^a-z0-9]+", " ", (authors or "").lower()) + " "
+    matched = []
+    for member in read_csv(MEMBERS_CSV):
+        name = member.get("name", "")
+        parts = [part for part in re.split(r"\s+", name.lower()) if part]
+        if len(parts) < 2:
+            continue
+        last = parts[-1]
+        first_initial = parts[0][0]
+        patterns = [
+            f" {last} {first_initial} ",
+            f" {last} {first_initial.upper().lower()}",
+            f" {name.lower()} ",
+        ]
+        if any(pattern in author_text for pattern in patterns):
+            matched.append(member.get("member_id", ""))
+    return ";".join([member_id for member_id in matched if member_id]) or "lab"
 
 def build_activity_row(sheet_row: dict[str, str], existing: list[dict[str, str]], token: str, download_images: bool) -> dict[str, str] | None:
     record_type = normalize_type(sheet_row.get("record_type", ""))
     if not record_type:
         return None
-    if record_type == "publication":
-        raise ValueError("Publication submissions are intentionally excluded from the lab-member Google Form workflow.")
     if record_type not in ALLOWED_TYPES:
         raise ValueError(f"Unsupported record_type: {record_type}")
-    date, date_display, year = normalize_date(sheet_row.get("date", ""))
-    normalized_member_ids = normalize_member_ids(sheet_row.get("member_ids", "lab") or "lab")
     values = {field: "" for field in FIELDS}
-    values.update({
-        "record_type": record_type,
-        "member_ids": normalized_member_ids,
-        "member_names": member_names(normalized_member_ids),
-        "title": sheet_row.get("title", ""),
-        "date": date,
-        "date_display": date_display,
-        "year": year,
-        "venue": sheet_row.get("venue", ""),
-        "location": sheet_row.get("location", ""),
-        "role": sheet_row.get("role", ""),
-        "url": sheet_row.get("url", ""),
-        "abstract_or_description": sheet_row.get("abstract_or_description", ""),
-        "visibility": sheet_row.get("visibility", "public") or "public",
-    })
+    if record_type == "publication":
+        pubmed_id = sheet_row.get("pubmed_id", "")
+        doi = sheet_row.get("doi", "")
+        if not pubmed_id and not doi:
+            raise ValueError("Publication requires PubMed ID or DOI.")
+        values.update(pubmed_lookup(pubmed_id=pubmed_id, doi=doi))
+        inferred_member_ids = infer_publication_member_ids(values.get("authors", ""))
+        values.update({
+            "record_type": "publication",
+            "member_ids": inferred_member_ids,
+            "member_names": member_names(inferred_member_ids),
+            "visibility": sheet_row.get("visibility", "public") or "public",
+        })
+    else:
+        date, date_display, year = normalize_date(sheet_row.get("date", ""))
+        normalized_member_ids = normalize_member_ids(sheet_row.get("member_ids", "lab") or "lab")
+        values.update({
+            "record_type": record_type,
+            "member_ids": normalized_member_ids,
+            "member_names": member_names(normalized_member_ids),
+            "title": sheet_row.get("title", ""),
+            "date": date,
+            "date_display": date_display,
+            "year": year,
+            "venue": sheet_row.get("venue", ""),
+            "location": sheet_row.get("location", ""),
+            "role": sheet_row.get("role", ""),
+            "url": sheet_row.get("url", ""),
+            "abstract_or_description": sheet_row.get("abstract_or_description", ""),
+            "visibility": sheet_row.get("visibility", "public") or "public",
+        })
     missing = [field for field in REQUIRED_BY_TYPE.get(record_type, []) if not values.get(field, "").strip()]
     if missing:
         raise ValueError(f"Missing required fields for {record_type}: " + ", ".join(missing))
@@ -329,7 +429,6 @@ def build_activity_row(sheet_row: dict[str, str], existing: list[dict[str, str]]
     if image_value:
         values["image"] = download_drive_image(image_value, record_id, token) if download_images else first_url(image_value)
     return values
-
 
 def main() -> None:
     if hasattr(sys.stdout, "reconfigure"):

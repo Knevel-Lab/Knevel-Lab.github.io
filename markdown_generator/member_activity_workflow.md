@@ -154,7 +154,7 @@ The preferred lab-member workflow is documented in:
 
 - `markdown_generator/google_form_sheet_workflow.md`
 
-In this workflow, lab members submit talks, outreach, awards, applications, and projects through Google Form. Publications are intentionally excluded from the form and should be handled by separate PubMed automation.
+In this workflow, lab members submit publications, talks, outreach, awards, applications, and projects through Google Form. Publication submissions contain only PubMed ID and/or DOI; PubMed metadata is fetched automatically by `markdown_generator/import_activity_sheet.py`.
 
 The GitHub Actions workflow for importing Google Sheet responses is present but disabled by default:
 

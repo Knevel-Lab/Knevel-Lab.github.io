@@ -4,7 +4,7 @@ This is the preferred lab-member submission workflow. It does not require the ma
 
 ## Scope
 
-The Google Form uses section branching. Lab members first choose the item type, then see only the questions needed for that type. Lab members submit only non-publication website items:
+The Google Form uses section branching. Lab members first choose the item type, then see only the questions needed for that type. Publication submissions show only PubMed ID and DOI fields; all other publication metadata is filled from PubMed by the importer. Lab members submit these website items:
 
 - `talk`
 - `invited_presentation`
@@ -13,7 +13,7 @@ The Google Form uses section branching. Lab members first choose the item type, 
 - `application`
 - `project`
 
-`publication` is intentionally excluded from the Google Form. Publications should be handled by a separate PubMed-based automation so lab members do not enter publication metadata manually.
+Publication is included in the Google Form, but only with two fields: `publication_pubmed_id` and `publication_doi`. PubMed ID is preferred. If PubMed ID is blank, the importer tries to resolve the DOI in PubMed. Lab members should not enter publication title, authors, journal, DOI metadata, or citation manually.
 
 ## One-time Google setup
 
@@ -94,6 +94,7 @@ python markdown_generator/generate_site_content.py --check --generate-site
 
 The branched Google Form uses different required fields per section:
 
+- Publication: PubMed ID or DOI. PubMed ID is preferred; DOI is fallback. No title/authors/journal/citation fields are shown.
 - Talk / invited presentation / public outreach: member IDs, title, date, venue, visibility.
 - Award: member IDs, title, date, awardee/role, description, visibility; optional venue, location, URL, and one image.
 - Application / project: member IDs, title, URL, description, visibility; optional role, date, venue, and one image.

@@ -2,8 +2,8 @@
  * Create the Knevel Lab website activity Google Form and linked Google Sheet.
  *
  * Run once from https://script.google.com/ with the Google account that should
- * own the form and response sheet. Publication is intentionally excluded;
- * publication updates should come from the separate PubMed automation.
+ * own the form and response sheet. Publication submissions use only PubMed ID
+ * or DOI; metadata is completed by the GitHub Actions importer.
  */
 function createKnevelWebsiteActivityForm() {
   const members = [
@@ -27,14 +27,17 @@ function createKnevelWebsiteActivityForm() {
 
   const sheet = SpreadsheetApp.create('Knevel Lab website activity submissions');
   const form = FormApp.create('Knevel Lab website activity submission');
-  form.setDescription('Submit talks, outreach, awards, applications, and projects for the Knevel Lab website. Publications are handled separately from PubMed and should not be submitted here.');
+  form.setDescription('Submit publications, talks, outreach, awards, applications, and projects for the Knevel Lab website. For publications, enter only PubMed ID or DOI; metadata is filled later from PubMed.');
   form.setCollectEmail(true);
   form.setDestination(FormApp.DestinationType.SPREADSHEET, sheet.getId());
 
   const typeItem = form.addMultipleChoiceItem()
     .setTitle('record_type')
-    .setHelpText('Choose one. Publication is intentionally excluded.')
+    .setHelpText('Choose one. Publication requires only PubMed ID or DOI.')
     .setRequired(true);
+
+  const publicationPage = form.addPageBreakItem().setTitle('Publication');
+  addPublicationSection_(form);
 
   const talkPage = form.addPageBreakItem().setTitle('Talk / presentation');
   addTalkSection_(form, memberChoices, 'talk');
@@ -55,6 +58,7 @@ function createKnevelWebsiteActivityForm() {
   addLinkedItemSection_(form, memberChoices, 'project', 'Project name', 'Project URL', true);
 
   typeItem.setChoices([
+    typeItem.createChoice('publication', publicationPage),
     typeItem.createChoice('talk', talkPage),
     typeItem.createChoice('invited_presentation', invitedPage),
     typeItem.createChoice('public_outreach', outreachPage),
@@ -68,7 +72,16 @@ function createKnevelWebsiteActivityForm() {
   Logger.log('Response Sheet URL: ' + sheet.getUrl());
   Logger.log('Manual file upload setup required: add File upload questions named award_image_upload, application_image_upload, and project_image_upload in the Google Form editor.');
 }
-
+function addPublicationSection_(form) {
+  form.addTextItem()
+    .setTitle('publication_pubmed_id')
+    .setHelpText('Preferred. Enter PubMed ID only, e.g. 42498579.')
+    .setRequired(false);
+  form.addTextItem()
+    .setTitle('publication_doi')
+    .setHelpText('Use only when PubMed ID is unknown. The importer will resolve DOI to PubMed when possible.')
+    .setRequired(false);
+}
 function addMembers_(form, title, choices) {
   return form.addCheckboxItem()
     .setTitle(title)
