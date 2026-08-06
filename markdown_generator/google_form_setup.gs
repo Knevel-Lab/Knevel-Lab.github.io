@@ -8,13 +8,11 @@
 function createKnevelWebsiteActivityForm() {
   const members = [
     ['rachel_knevel', 'Rachel Knevel'],
-    ['tjardo_maarseveen', 'Tjardo Maarseveen'],
     ['nils_steinz', 'Nils Steinz'],
     ['ling_qing', 'Ling Qing'],
     ['floor_dijkstra_zegers', 'Floor Dijkstra Zegers'],
     ['georgy_gomon', 'Georgy Gomon'],
     ['daniyal_selani', 'Daniyal Selani'],
-    ['jyaysi_desai', 'Jyaysi Desai'],
     ['suguru_honda', 'Suguru Honda'],
     ['inez_den_hond', 'Inez den Hond'],
     ['bahar_sedaghatikhayat', 'Bahar Sedaghatikhayat'],
