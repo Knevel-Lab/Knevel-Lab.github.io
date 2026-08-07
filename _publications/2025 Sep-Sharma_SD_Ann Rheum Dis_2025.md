@@ -1,7 +1,7 @@
 ---
 title: "Systematic review and independent validation of genetic factors of radiographic outcome in rheumatoid arthritis identifies a genome-wide association with CARD9"
 collection: publications
-permalink: /publication/2025 Sep-Sharma_SD_Ann Rheum Dis_2025
+permalink: "/publication/2025 Sep-Sharma_SD_Ann Rheum Dis_2025"
 excerpt: "This study aimed to investigate non-HLA genetic mechanisms underlying radiographic severity in rheumatoid arthritis (RA)."
 date: 2025 Sep
 venue: "Ann Rheum Dis"

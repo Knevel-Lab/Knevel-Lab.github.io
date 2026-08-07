@@ -1,7 +1,7 @@
 ---
 title: "Interactions Between Genome-Wide Genetic Factors and Smoking Influencing Risk of Systemic Lupus Erythematosus"
 collection: publications
-permalink: /publication/2020 Nov-Cui_J_Arthritis Rheumatol_2020
+permalink: "/publication/2020 Nov-Cui_J_Arthritis Rheumatol_2020"
 excerpt: "To identify interactions between genetic factors and current or recent smoking in relation to risk of developing systemic lupus erythematosus (SLE)."
 date: 2020 Nov
 venue: "Arthritis Rheumatol"

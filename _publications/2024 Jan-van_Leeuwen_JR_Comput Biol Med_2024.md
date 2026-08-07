@@ -1,7 +1,7 @@
 ---
 title: "Using an artificial intelligence tool incorporating natural language processing to identify patients with a diagnosis of ANCA-associated vasculitis in electronic health records"
 collection: publications
-permalink: /publication/2024 Jan-van_Leeuwen_JR_Comput Biol Med_2024
+permalink: "/publication/2024 Jan-van_Leeuwen_JR_Comput Biol Med_2024"
 excerpt: "Because anti-neutrophil cytoplasmatic antibody (ANCA)-associated vasculitis (AAV) is a rare, life-threatening, auto-immune disease, conducting research is difficult but essential. A long-lasting challenge is to identify rare AAV patients within the electronic-health-record (EHR)-system to facilitate real-world research. Artificial intelligence (AI)-search tools using natural language processing (NLP) for text-mining are increasingly postulated as a solution."
 date: 2024 Jan
 venue: "Comput Biol Med"

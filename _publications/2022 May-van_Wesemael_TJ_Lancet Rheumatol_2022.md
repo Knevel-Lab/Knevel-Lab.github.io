@@ -1,7 +1,7 @@
 ---
 title: "Anti-citrullinated protein antibodies dominate the association of long-term outcomes and anti-modified protein antibodies in rheumatoid arthritis"
 collection: publications
-permalink: /publication/2022 May-van_Wesemael_TJ_Lancet Rheumatol_2022
+permalink: "/publication/2022 May-van_Wesemael_TJ_Lancet Rheumatol_2022"
 excerpt: "DOI: 10.1016/S2665-9913(22)00095-9PMID: 38294031"
 date: 2022 May
 venue: "Lancet Rheumatol"

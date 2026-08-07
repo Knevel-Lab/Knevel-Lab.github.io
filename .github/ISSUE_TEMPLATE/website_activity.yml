@@ -1,0 +1,117 @@
+name: Website activity submission
+description: Submit a talk, outreach item, award, application, or project for the Knevel Lab website.
+title: "Website activity: <short title>"
+labels: ["website-activity"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form to submit one non-publication website item. Publications are intentionally excluded and should be handled by the separate PubMed automation.
+
+        The preferred lab-member workflow is Google Form / Google Sheet. This GitHub Issue Form remains available as a fallback for maintainers.
+
+        For Awards, Applications, and Projects, paste one image URL or drag one image into the image field and keep the generated GitHub attachment URL.
+
+        Current member IDs:
+        - `rachel_knevel` = Rachel Knevel
+        - `tjardo_maarseveen` = Tjardo Maarseveen
+        - `nils_steinz` = Nils Steinz
+        - `ling_qing` = Ling Qing
+        - `floor_dijkstra_zegers` = Floor Dijkstra Zegers
+        - `georgy_gomon` = Georgy Gomon
+        - `daniyal_selani` = Daniyal Selani
+        - `jyaysi_desai` = Jyaysi Desai
+        - `suguru_honda` = Suguru Honda
+        - `inez_den_hond` = Inez den Hond
+        - `bahar_sedaghatikhayat` = Bahar Sedaghatikhayat
+        - `mick_blikman` = Mick Blikman
+        - `qingshuang_xie` = Qingshuang Xie
+        - `david_steeman` = David Steeman
+        - `lab` = lab-wide item
+
+  - type: dropdown
+    id: record_type
+    attributes:
+      label: Type
+      options:
+        - talk
+        - invited_presentation
+        - public_outreach
+        - award
+        - application
+        - project
+    validations:
+      required: true
+
+  - type: input
+    id: member_ids
+    attributes:
+      label: Lab member IDs
+      description: Semicolon-separated IDs from markdown_generator/lab_members.csv. Use lab for lab-wide items.
+      placeholder: rachel_knevel;inez_den_hond
+    validations:
+      required: true
+
+  - type: input
+    id: title
+    attributes:
+      label: Title
+      placeholder: "SPIDERR: prediction triage and care pathways on the road to RA"
+    validations:
+      required: true
+
+  - type: input
+    id: date
+    attributes:
+      label: Date
+      description: Use YYYY-MM-DD when possible. Year or YYYY Mon is also accepted.
+      placeholder: 2026-07-24
+    validations:
+      required: true
+
+  - type: input
+    id: venue
+    attributes:
+      label: Venue / meeting
+      placeholder: EULAR, Digital Rheumatology Days
+
+  - type: input
+    id: location
+    attributes:
+      label: Location
+      placeholder: Amsterdam, Berlin, online
+
+  - type: input
+    id: role
+    attributes:
+      label: Role / awardee / developer
+      placeholder: Invited speaker, awardee, Developed by Jane Doe
+
+  - type: input
+    id: url
+    attributes:
+      label: URL
+      placeholder: https://example.org/item
+
+  - type: textarea
+    id: abstract_or_description
+    attributes:
+      label: Description
+      placeholder: Short website description.
+
+  - type: textarea
+    id: image
+    attributes:
+      label: Image URL or GitHub attachment URL
+      description: Awards, Applications, and Projects can use one image. Drag an image here or paste one URL.
+      placeholder: https://github.com/user-attachments/assets/...
+
+  - type: dropdown
+    id: visibility
+    attributes:
+      label: Visibility
+      options:
+        - public
+        - hidden
+    validations:
+      required: true

@@ -1,7 +1,7 @@
 ---
 title: "Rapid Response to Remdesivir in Hospitalised COVID-19 Patients: A Propensity Score Weighted Multicentre Cohort Study"
 collection: publications
-permalink: /publication/2023 Oct-Leegwater_E_Infect Dis Ther_2023
+permalink: "/publication/2023 Oct-Leegwater_E_Infect Dis Ther_2023"
 excerpt: "Remdesivir is a registered treatment for hospitalised patients with COVID-19 that has moderate clinical effectiveness. Anecdotally, some patients' respiratory insufficiency seemed to recover particularly rapidly after initiation of remdesivir. In this study, we investigated if this rapid improvement was caused by remdesivir, and which patient characteristics might predict a rapid clinical improvement in response to remdesivir."
 date: 2023 Oct
 venue: "Infect Dis Ther"

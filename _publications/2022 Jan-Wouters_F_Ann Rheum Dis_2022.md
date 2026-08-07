@@ -1,7 +1,7 @@
 ---
 title: "Determining in which pre-arthritis stage HLA-shared epitope alleles and smoking exert their effect on the development of rheumatoid arthritis"
 collection: publications
-permalink: /publication/2022 Jan-Wouters_F_Ann Rheum Dis_2022
+permalink: "/publication/2022 Jan-Wouters_F_Ann Rheum Dis_2022"
 excerpt: "The human leukocyte antigen-shared epitope (HLA-SE) alleles and smoking are the most prominent genetic and environmental risk factors for rheumatoid arthritis (RA). However, at which pre-arthritis stage (asymptomatic/symptomatic) they exert their effect is unknown. We aimed to determine whether HLA-SE and smoking are involved in the onset of autoantibody positivity, symptoms (clinically suspect arthralgia (CSA)) and/or progression to clinical arthritis."
 date: 2022 Jan
 venue: "Ann Rheum Dis"

@@ -1,7 +1,7 @@
 ---
 title: "The Disconnect Between Development and Intended Use of Clinical Prediction Models for Covid-19: A Systematic Review and Real-World Data Illustration"
 collection: publications
-permalink: /publication/2022 Jun 27-Prosepe_I_Front Epidemiol_2022
+permalink: "/publication/2022 Jun 27-Prosepe_I_Front Epidemiol_2022"
 excerpt: "The SARS-CoV-2 pandemic has boosted the appearance of clinical predictions models in medical literature. Many of these models aim to provide guidance for decision making on treatment initiation. Special consideration on how to account for post-baseline treatments is needed when developing such models. We examined how post-baseline treatment was handled in published Covid-19 clinical prediction models and we illustrated how much estimated risks may differ according to how treatment is handled."
 date: 2022 Jun 27
 venue: "Front Epidemiol"

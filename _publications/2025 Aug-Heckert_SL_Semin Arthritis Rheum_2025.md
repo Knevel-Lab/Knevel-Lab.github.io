@@ -1,7 +1,7 @@
 ---
 title: "Rheumatoid arthritis-associated interstitial lung disease in countries across the world"
 collection: publications
-permalink: /publication/2025 Aug-Heckert_SL_Semin Arthritis Rheum_2025
+permalink: "/publication/2025 Aug-Heckert_SL_Semin Arthritis Rheum_2025"
 excerpt: "We aimed to describe the incidence of RA-ILD in various countries worldwide, and to explore its association with RA disease activity."
 date: 2025 Aug
 venue: "Semin Arthritis Rheum"

@@ -1,7 +1,7 @@
 ---
 title: "The eMERGE genotype set of 83,717 subjects imputed to ~40&thinsp;million variants genome wide and association with the herpes zoster medical record phenotype"
 collection: publications
-permalink: /publication/2019 Feb-Stanaway_IB_Genet Epidemiol_2019
+permalink: "/publication/2019 Feb-Stanaway_IB_Genet Epidemiol_2019"
 excerpt: "The Electronic Medical Records and Genomics (eMERGE) network is a network of medical centers with electronic medical records linked to existing biorepository samples for genomic discovery and genomic medicine research. The network sought to unify the genetic results from 78 Illumina and Affymetrix genotype array batches from 12 contributing medical centers for joint association analysis of 83,717 human participants. In this report, we describe the imputation of eMERGE results and methods to create the unified imputed merged set of genome-wide variant genotype data. We imputed the data using the Michigan Imputation Server, which provides a missing single-nucleotide variant genotype imputation service using the minimac3 imputation algorithm with the Haplotype Reference Consortium genotype reference set. We describe the quality control and filtering steps used in the generation of this data set and suggest generalizable quality thresholds for imputation and phenotype association studies. To test the merged imputed genotype set, we replicated a previously reported chromosome 6 HLA-B herpes zoster (shingles) association and discovered a novel zoster-associated loci in an epigenetic binding site near the terminus of chromosome 3 (3p29)."
 date: 2019 Feb
 venue: "Genet Epidemiol"

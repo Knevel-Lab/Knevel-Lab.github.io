@@ -1,7 +1,7 @@
 ---
 title: "RPA3-UMAD1 rs12702634 and rheumatoid arthritis-associated interstitial lung disease in European ancestry"
 collection: publications
-permalink: /publication/2024 Jun 4-Juge_PA_Rheumatol Adv Pract_2024
+permalink: "/publication/2024 Jun 4-Juge_PA_Rheumatol Adv Pract_2024"
 excerpt: "Recently, a genome-wide association study identified an association between RA-associated interstitial lung disease (ILD) and RPA3-UMAD1 rs12702634 in the Japanese population, especially for patients with a usual interstitial pneumonia (UIP) pattern. We aimed to replicate this association in a European population and test for interaction with MUC5B rs35705950."
 date: 2024 Jun 4
 venue: "Rheumatol Adv Pract"

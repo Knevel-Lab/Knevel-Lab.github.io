@@ -1,7 +1,7 @@
 ---
 title: "Development and validation of an early warning model for hospitalized COVID-19 patients: a multi-center retrospective cohort study"
 collection: publications
-permalink: /publication/2022 Sep 19-Smit_JM_Intensive Care Med Exp_2022
+permalink: "/publication/2022 Sep 19-Smit_JM_Intensive Care Med Exp_2022"
 excerpt: "Timely identification of deteriorating COVID-19 patients is needed to guide changes in clinical management and admission to intensive care units (ICUs). There is significant concern that widely used Early warning scores (EWSs) underestimate illness severity in COVID-19 patients and therefore, we developed an early warning model specifically for COVID-19 patients."
 date: 2022 Sep 19
 venue: "Intensive Care Med Exp"

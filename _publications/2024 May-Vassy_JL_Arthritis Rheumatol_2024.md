@@ -1,7 +1,7 @@
 ---
 title: "Finding the Right Fit for Genes in Rheumatology Clinical Care"
 collection: publications
-permalink: /publication/2024 May-Vassy_JL_Arthritis Rheumatol_2024
+permalink: "/publication/2024 May-Vassy_JL_Arthritis Rheumatol_2024"
 excerpt: "DOI: 10.1002/art.42769PMID: 38057135 [Indexed for MEDLINE]"
 date: 2024 May
 venue: "Arthritis Rheumatol"

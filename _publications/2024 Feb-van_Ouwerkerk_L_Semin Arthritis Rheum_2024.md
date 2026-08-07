@@ -1,7 +1,7 @@
 ---
 title: "Is glucocorticoid bridging therapy associated with later use of glucocorticoids and biological DMARDs during the disease course of patients with rheumatoid arthritis in daily practice? A real-world data analysis"
 collection: publications
-permalink: /publication/2024 Feb-van_Ouwerkerk_L_Semin Arthritis Rheum_2024
+permalink: "/publication/2024 Feb-van_Ouwerkerk_L_Semin Arthritis Rheum_2024"
 excerpt: "To evaluate if initially starting glucocorticoid (GC) bridging leads to a higher probability of long-term GC and biological (b)DMARD use in rheumatoid arthritis (RA)-patients."
 date: 2024 Feb
 venue: "Semin Arthritis Rheum"

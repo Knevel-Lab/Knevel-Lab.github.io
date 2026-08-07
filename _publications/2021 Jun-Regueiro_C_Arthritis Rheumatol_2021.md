@@ -1,7 +1,7 @@
 ---
 title: "HLA-B*08 Identified as the Most Prominently Associated Major Histocompatibility Complex Locus for Anti-Carbamylated Protein Antibody-Positive/Anti-Cyclic Citrullinated Peptide-Negative Rheumatoid Arthritis"
 collection: publications
-permalink: /publication/2021 Jun-Regueiro_C_Arthritis Rheumatol_2021
+permalink: "/publication/2021 Jun-Regueiro_C_Arthritis Rheumatol_2021"
 excerpt: "Previously, only the HLA-DRB1 alleles have been assessed in rheumatoid arthritis (RA). The aim of the present study was to identify the key major histocompatibility complex (MHC) susceptibility factors showing a significant association with anti-carbamylated protein antibody-positive (anti-CarP+) RA."
 date: 2021 Jun
 venue: "Arthritis Rheumatol"

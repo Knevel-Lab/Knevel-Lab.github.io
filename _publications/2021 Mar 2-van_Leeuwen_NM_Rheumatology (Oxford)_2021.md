@@ -1,7 +1,7 @@
 ---
 title: "Disease progression in systemic sclerosis"
 collection: publications
-permalink: /publication/2021 Mar 2-van_Leeuwen_NM_Rheumatology (Oxford)_2021
+permalink: "/publication/2021 Mar 2-van_Leeuwen_NM_Rheumatology (Oxford)_2021"
 excerpt: "DOI: 10.1093/rheumatology/keaa911PMCID: PMC7937017PMID: 33404661 [Indexed for MEDLINE]"
 date: 2021 Mar 2
 venue: "Rheumatology (Oxford)"

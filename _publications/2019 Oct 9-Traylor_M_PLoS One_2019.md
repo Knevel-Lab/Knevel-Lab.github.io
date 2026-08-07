@@ -1,7 +1,7 @@
 ---
 title: "Genetic associations with radiological damage in rheumatoid arthritis: Meta-analysis of seven genome-wide association studies of 2,775 cases"
 collection: publications
-permalink: /publication/2019 Oct 9-Traylor_M_PLoS One_2019
+permalink: "/publication/2019 Oct 9-Traylor_M_PLoS One_2019"
 excerpt: "Previous studies of radiological damage in rheumatoid arthritis (RA) have used candidate-gene approaches, or evaluated single genome-wide association studies (GWAS). We undertook the first meta-analysis of GWAS of RA radiological damage to: (1) identify novel genetic loci for this trait; and (2) test previously validated variants."
 date: 2019 Oct 9
 venue: "PLoS One"

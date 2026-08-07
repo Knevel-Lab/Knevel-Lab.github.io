@@ -10,3 +10,10 @@ group :jekyll_plugins do
 end
 
 gem 'github-pages'
+
+# Explicit default gems needed by Ruby 3.4+ when running Jekyll 3 locally.
+gem 'csv'
+gem 'logger'
+gem 'base64'
+gem 'bigdecimal'
+gem 'tzinfo-data'

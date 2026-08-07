@@ -2,7 +2,7 @@
 title: "EULAR 2024 RA subsets"
 collection: talks
 type: "Poster by Tjardo Maarseveen"
-permalink: /talks/2024-06-13-2024_TDM_EULAR_RA_SUBSETS
+permalink: "/talks/2024-06-13-2024_TDM_EULAR_RA_SUBSETS"
 venue: "EULAR 2024"
 date: 2024-06-13
 location: "Vienna, Austria"

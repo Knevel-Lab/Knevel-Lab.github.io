@@ -1,7 +1,7 @@
 ---
 title: "The Role of Genetics in Clinically Suspect Arthralgia and Rheumatoid Arthritis Development: A Large Cross-Sectional Study"
 collection: publications
-permalink: /publication/2023 Feb-Maurits_MP_Arthritis Rheumatol_2023
+permalink: "/publication/2023 Feb-Maurits_MP_Arthritis Rheumatol_2023"
 excerpt: "To investigate whether established genetic predictors for rheumatoid arthritis (RA) differentiate healthy controls, patients with clinically suspect arthralgia (CSA), and RA patients."
 date: 2023 Feb
 venue: "Arthritis Rheumatol"

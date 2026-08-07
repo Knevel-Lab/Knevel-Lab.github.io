@@ -1,7 +1,7 @@
 ---
 title: "Autoantibody clusters in rheumatoid arthritis are not driven by antigen specificity or isotype"
 collection: publications
-permalink: /publication/2025 Jun 13-van_Mourik_AG_RMD Open_2025
+permalink: "/publication/2025 Jun 13-van_Mourik_AG_RMD Open_2025"
 excerpt: "Autoantibodies are a key feature of rheumatoid arthritis (RA). They can be detected years before disease onset, but it is unknown if there is any pattern in the co-occurrence of antigen recognition or isotype profiles. A common signature could point to a unique initial trigger for autoantibody development. Therefore, we sought to determine if there is a pattern in antigen or isotype reactivity in pre-symptomatic cases and established RA."
 date: 2025 Jun 13
 venue: "RMD Open"

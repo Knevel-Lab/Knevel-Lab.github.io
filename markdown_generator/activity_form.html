@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Knevel Lab activity form</title>
+  <style>
+    :root { color-scheme: light; --ink:#202124; --muted:#667085; --line:#d0d5dd; --bg:#f6f8fb; --panel:#fff; --accent:#0f766e; --warn:#b42318; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Arial, Helvetica, sans-serif; color:var(--ink); background:var(--bg); }
+    main { max-width: 1080px; margin: 0 auto; padding: 28px; }
+    h1 { font-size: 24px; margin: 0 0 18px; }
+    form { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:20px; }
+    .grid { display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:16px; }
+    .full { grid-column: 1 / -1; }
+    label { display:block; font-size:13px; font-weight:700; margin-bottom:6px; }
+    input, select, textarea { width:100%; border:1px solid var(--line); border-radius:6px; padding:10px 11px; font-size:14px; background:#fff; color:var(--ink); }
+    textarea { min-height: 112px; resize: vertical; }
+    input::placeholder, textarea::placeholder { color:#98a2b3; }
+    select[multiple] { min-height: 150px; }
+    .row { display:flex; gap:8px; align-items:end; }
+    .row > * { flex:1; }
+    button { border:0; border-radius:6px; padding:10px 14px; font-weight:700; cursor:pointer; background:var(--accent); color:#fff; }
+    button.secondary { background:#344054; }
+    button:disabled { opacity:.55; cursor:not-allowed; }
+    .hint { color:var(--muted); font-size:12px; margin-top:5px; }
+    .hidden { display:none; }
+    .status { margin-top:14px; padding:10px 12px; border-radius:6px; background:#ecfdf3; color:#027a48; white-space:pre-wrap; }
+    .status.error { background:#fef3f2; color:var(--warn); }
+    .status.warning { background:#fffaeb; color:#b54708; }
+    .type-note { color:var(--muted); margin: 0 0 14px; }
+    .required-mark { color:var(--warn); margin-left:3px; }
+    @media (max-width: 760px) { main { padding:16px; } .grid { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Knevel Lab website activity form</h1>
+  <p class="type-note">Save writes to <code>markdown_generator/member_activity_records.csv</code>, copies one uploaded image to <code>images/</code>, then regenerates the website files.</p>
+
+  <form id="activityForm">
+    <div class="grid">
+      <div>
+        <label for="record_type">Type</label>
+        <select id="record_type" name="record_type" required>
+          <option value="publication">Publication</option>
+          <option value="talk">Talk / presentation</option>
+          <option value="invited_presentation">Invited presentation</option>
+          <option value="public_outreach">Public outreach</option>
+          <option value="award">Award</option>
+          <option value="application">Application</option>
+          <option value="project">Project</option>
+        </select>
+      </div>
+      <div>
+        <label for="visibility">Visibility</label>
+        <select id="visibility" name="visibility">
+          <option value="public">Public</option>
+          <option value="hidden">Hidden draft</option>
+        </select>
+      </div>
+
+      <div class="full pubmed-only">
+        <label for="pmid_lookup">PubMed ID auto-fill</label>
+        <div class="row">
+          <input id="pmid_lookup" type="text" inputmode="numeric" placeholder="e.g. 40123456">
+          <button class="secondary" id="lookupBtn" type="button">Fetch PubMed</button>
+        </div>
+        <div class="hint">For publications, enter PMID and click Fetch PubMed to fill title, journal, DOI, authors, citation, URL, abstract, and date.</div>
+      </div>
+
+      <div class="full">
+        <label for="title">Title</label>
+        <input id="title" name="title" required placeholder="e.g. Digital Rheumatology Research Award 2026">
+      </div>
+
+      <div>
+        <label for="date">Date</label>
+        <input id="date" name="date" placeholder="e.g. 2026-03-15, 2026 Mar, or 2026">
+      </div>
+      <div>
+        <label for="venue">Venue / journal / meeting</label>
+        <input id="venue" name="venue" placeholder="e.g. Ann Rheum Dis, EULAR, GitHub">
+      </div>
+      <div>
+        <label for="location">Location</label>
+        <input id="location" name="location" placeholder="e.g. Amsterdam, Berlin, online">
+      </div>
+      <div>
+        <label for="role">Role / developer / awardee</label>
+        <input id="role" name="role" placeholder="e.g. Invited speaker, Developed by Jane Doe, awardee">
+      </div>
+
+      <div class="full">
+        <label for="member_ids">Lab member(s)</label>
+        <select id="member_ids" name="member_ids" multiple></select>
+        <div class="hint">Hold Ctrl/Cmd to select multiple people. Leave empty for lab-wide item.</div>
+      </div>
+
+      <div class="publication-fields full">
+        <label for="authors">Authors</label>
+        <textarea id="authors" name="authors" placeholder="e.g. Knevel R, Maarseveen TD, Steinz N"></textarea>
+      </div>
+      <div class="publication-fields full">
+        <label for="citation">Citation</label>
+        <textarea id="citation" name="citation" placeholder="Auto-filled from PubMed; edit if the website should show a specific citation format."></textarea>
+      </div>
+      <div class="publication-fields">
+        <label for="doi">DOI</label>
+        <input id="doi" name="doi" placeholder="e.g. 10.1136/ard-2025-123456">
+      </div>
+      <div class="publication-fields">
+        <label for="pubmed_id">PubMed ID</label>
+        <input id="pubmed_id" name="pubmed_id" placeholder="e.g. 40123456">
+      </div>
+
+      <div class="full">
+        <label for="url">URL</label>
+        <input id="url" name="url" placeholder="e.g. https://doi.org/10.xxxx/yyyy or https://github.com/Knevel-Lab/tool">
+      </div>
+
+      <div class="full">
+        <label for="abstract_or_description">Abstract / description</label>
+        <textarea id="abstract_or_description" name="abstract_or_description" placeholder="Short description shown on the website. PubMed can fill this for publications."></textarea>
+      </div>
+
+      <div class="image-fields full">
+        <label for="image_file">Image upload</label>
+        <input id="image_file" name="image_file" type="file" accept="image/png,image/jpeg,image/gif,image/webp">
+        <input id="image" name="image" type="hidden">
+        <div class="hint">One image only. Used for Awards, Applications, and Projects. The file is copied to <code>images/</code>.</div>
+      </div>
+
+      <input type="hidden" name="record_id" id="record_id">
+      <input type="hidden" name="date_display" id="date_display">
+      <input type="hidden" name="year" id="year">
+      <input type="hidden" name="featured" value="">
+      <input type="hidden" name="source_file" value="">
+      <input type="hidden" name="permalink" value="">
+      <input type="hidden" name="notes_private" value="">
+
+      <div class="full row">
+        <button type="submit" id="saveBtn" disabled>Save to CSV and regenerate site</button>
+        <button type="reset" class="secondary">Clear</button>
+      </div>
+    </div>
+  </form>
+  <div id="status" class="status hidden"></div>
+</main>
+<script>
+const form = document.getElementById('activityForm');
+const typeSelect = document.getElementById('record_type');
+const statusBox = document.getElementById('status');
+const saveBtn = document.getElementById('saveBtn');
+const publicationFields = [...document.querySelectorAll('.publication-fields, .pubmed-only')];
+const imageFields = [...document.querySelectorAll('.image-fields')];
+const imageTypes = new Set(['award', 'application', 'project']);
+const fieldLabels = [...document.querySelectorAll('label[for]')].reduce((labels, label) => {
+  labels[label.getAttribute('for')] = label;
+  return labels;
+}, {});
+const requiredByType = {
+  publication: ['title', 'date', 'venue', 'authors', 'citation', 'pubmed_id'],
+  talk: ['title', 'date', 'venue'],
+  invited_presentation: ['title', 'date', 'venue'],
+  public_outreach: ['title', 'date', 'venue'],
+  award: ['title', 'date', 'role', 'member_ids', 'image_file'],
+  application: ['title', 'url', 'abstract_or_description', 'image_file'],
+  project: ['title', 'url', 'abstract_or_description', 'image_file']
+};
+const requiredNames = {
+  title: 'Title',
+  date: 'Date',
+  venue: 'Venue / journal / meeting',
+  authors: 'Authors',
+  citation: 'Citation',
+  pubmed_id: 'PubMed ID',
+  role: 'Role / developer / awardee',
+  member_ids: 'Lab member(s)',
+  url: 'URL',
+  abstract_or_description: 'Abstract / description',
+  image_file: 'Image upload'
+};
+const apiBase = window.location.protocol === 'file:' ? 'http://127.0.0.1:8765' : '';
+function apiUrl(path) { return apiBase + path; }
+function setStatus(message, level='ok') {
+  statusBox.textContent = message;
+  statusBox.className = 'status' + (level === 'error' ? ' error' : level === 'warning' ? ' warning' : '');
+}
+function labelRequired(fieldId, required) {
+  const label = fieldLabels[fieldId];
+  if (!label) return;
+  let mark = label.querySelector('.required-mark');
+  if (required && !mark) {
+    mark = document.createElement('span');
+    mark.className = 'required-mark';
+    mark.textContent = '*';
+    label.appendChild(mark);
+  } else if (!required && mark) {
+    mark.remove();
+  }
+}
+function fieldHasValue(fieldId) {
+  const field = document.getElementById(fieldId);
+  if (!field) return true;
+  if (fieldId === 'image_file') return Boolean(field.files && field.files.length) || Boolean(document.getElementById('image').value.trim());
+  if (field.tagName === 'SELECT' && field.multiple) return [...field.selectedOptions].length > 0;
+  return Boolean(field.value.trim());
+}
+function missingRequiredFields() {
+  return (requiredByType[typeSelect.value] || []).filter(fieldId => !fieldHasValue(fieldId));
+}
+function updateSaveState() {
+  const required = new Set(requiredByType[typeSelect.value] || []);
+  Object.keys(fieldLabels).forEach(fieldId => labelRequired(fieldId, required.has(fieldId)));
+  const missing = missingRequiredFields();
+  saveBtn.disabled = missing.length > 0;
+  saveBtn.title = missing.length ? 'Missing: ' + missing.map(fieldId => requiredNames[fieldId] || fieldId).join(', ') : '';
+}
+function updateTypeFields() {
+  const type = typeSelect.value;
+  publicationFields.forEach(el => el.classList.toggle('hidden', type !== 'publication'));
+  imageFields.forEach(el => el.classList.toggle('hidden', !imageTypes.has(type)));
+  const hints = {
+    publication: 'e.g. PMID 40123456, then Fetch PubMed',
+    talk: 'e.g. Presentation title at EULAR 2026',
+    invited_presentation: 'e.g. SPIDERR: prediction, triage and care pathways on the road to RA',
+    public_outreach: 'e.g. Public lecture, media item, patient outreach session',
+    award: 'e.g. Digital Rheumatology Research Award 2026',
+    application: 'e.g. Rheumalyze',
+    project: 'e.g. SPIDERR-Horizon EU'
+  };
+  document.getElementById('title').placeholder = hints[type] || 'Title';
+  updateSaveState();
+}
+typeSelect.addEventListener('change', updateTypeFields);
+form.addEventListener('input', updateSaveState);
+form.addEventListener('change', updateSaveState);
+updateTypeFields();
+if (window.location.protocol === 'file:') {
+  setStatus('This file was opened directly. PubMed lookup and Save require the local form server. Start it with: python markdown_generator\\activity_form_server.py, then use http://127.0.0.1:8765/.', 'warning');
+}
+fetch(apiUrl('/api/members')).then(r => r.json()).then(data => {
+  const select = document.getElementById('member_ids');
+  data.members.forEach(member => {
+    const option = document.createElement('option');
+    option.value = member.member_id;
+    option.textContent = `${member.name} (${member.status})`;
+    select.appendChild(option);
+  });
+  updateSaveState();
+}).catch(() => {
+  setStatus('Cannot connect to the local form server. Start it with: python markdown_generator\\activity_form_server.py, then open http://127.0.0.1:8765/.', 'error');
+});
+document.getElementById('lookupBtn').addEventListener('click', async () => {
+  const pmid = document.getElementById('pmid_lookup').value.trim();
+  if (!pmid) return setStatus('Enter a PubMed ID first.', 'error');
+  setStatus('Fetching PubMed data...');
+  try {
+    const response = await fetch(apiUrl('/api/pubmed?pmid=' + encodeURIComponent(pmid)));
+    const data = await response.json();
+    if (!data.ok) return setStatus(data.error, 'error');
+    for (const [key, value] of Object.entries(data.article)) {
+      const field = document.getElementById(key);
+      if (field) field.value = value || '';
+    }
+    updateSaveState();
+    setStatus('PubMed fields filled. Review them, choose lab members if needed, then save.');
+  } catch (error) {
+    setStatus('PubMed lookup failed. Make sure the form server is running and open http://127.0.0.1:8765/ instead of double-clicking the HTML file.', 'error');
+  }
+});
+form.addEventListener('submit', async event => {
+  event.preventDefault();
+  const missing = missingRequiredFields();
+  if (missing.length) {
+    updateSaveState();
+    setStatus('Fill required fields first: ' + missing.map(fieldId => requiredNames[fieldId] || fieldId).join(', '), 'error');
+    return;
+  }
+  setStatus('Saving CSV and regenerating site...');
+  saveBtn.disabled = true;
+  try {
+    const response = await fetch(apiUrl('/api/save'), { method: 'POST', body: new FormData(form) });
+    const data = await response.json();
+    if (!data.ok) throw new Error(data.error || 'Save failed');
+    setStatus(`Saved ${data.record_id}.\nImage: ${data.image || '(none)'}\n${data.output || ''}`);
+    form.reset();
+    updateTypeFields();
+  } catch (error) {
+    setStatus(error.message, 'error');
+  } finally {
+    updateSaveState();
+  }
+});
+</script>
+</body>
+</html>
