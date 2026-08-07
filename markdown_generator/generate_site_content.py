@@ -160,6 +160,30 @@ def normalize_date(raw: str) -> tuple[str, str, str]:
     return raw, raw, year
 
 
+def jekyll_date_value(row: dict[str, str]) -> str:
+    normalized, _display, year = normalize_date(row.get("date") or row.get("date_display") or row.get("year", ""))
+    if re.fullmatch(r"\d{4}-\d{2}-\d{2}", normalized):
+        return normalized
+    if re.fullmatch(r"\d{4}-\d{2}", normalized):
+        return f"{normalized}-01"
+    if re.fullmatch(r"\d{4}", normalized):
+        return f"{normalized}-01-01"
+    if year:
+        return f"{year}-01-01"
+    return ""
+
+
+def date_display_value(row: dict[str, str]) -> str:
+    raw_date = (row.get("date") or "").strip()
+    if re.fullmatch(r"\d{4}-\d{2}-\d{2}", raw_date):
+        return ""
+    raw = row.get("date_display") or row.get("date") or row.get("year", "")
+    normalized, display, _year = normalize_date(raw)
+    if re.fullmatch(r"\d{4}(-\d{2})?$", normalized):
+        return display
+    return ""
+
+
 def first_markdown_link(body: str) -> str:
     match = re.search(r"\[[^\]]+\]\(([^)]+)\)", body or "")
     return match.group(1).strip() if match else ""
@@ -581,7 +605,8 @@ def generate_publication_md(row: dict[str, str]) -> tuple[str, str]:
         "collection": "publications",
         "permalink": permalink,
         "excerpt": row.get("abstract_or_description", ""),
-        "date": row.get("date_display") or row.get("date") or row.get("year", ""),
+        "date": jekyll_date_value(row),
+        "date_display": date_display_value(row),
         "venue": row.get("venue", ""),
         "paperurl": row.get("url", ""),
         "citation": row.get("citation", ""),
@@ -623,7 +648,8 @@ def generate_talk_md(row: dict[str, str]) -> tuple[str, str]:
         "type": display_activity_type(row),
         "permalink": permalink,
         "venue": row.get("venue", ""),
-        "date": date,
+        "date": jekyll_date_value(row),
+        "date_display": date_display_value(row),
         "location": row.get("location", ""),
     }
     body = ""
