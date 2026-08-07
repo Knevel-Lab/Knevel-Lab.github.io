@@ -38,9 +38,27 @@ The maintainer-triggered GitHub Actions workflow is enabled at:
 Required repository configuration:
 
 - Repository variable `GOOGLE_SHEET_ID`: the raw spreadsheet ID from the response sheet URL.
-- Repository secret `GOOGLE_SERVICE_ACCOUNT_JSON`: JSON key for a Google service account with read access to the response sheet and uploaded image files.
+- Repository variable `GOOGLE_WORKLOAD_IDENTITY_PROVIDER`: Google Workload Identity Provider resource name for this GitHub repository.
+- Repository variable `GOOGLE_SERVICE_ACCOUNT`: service account email with read access to the response sheet and uploaded image files.
 
-The workflow uses Google Drive read-only scope and creates a PR; it does not push directly to `master`.
+Do not use a Google service-account JSON key for this workflow. Public repositories can accidentally expose generated credential files, and Google may disable leaked keys automatically. The workflow uses Google Workload Identity, Google Drive read-only scope, and creates a PR; it does not push directly to `master`.
+
+## Branch policy
+
+Keep the automation code available from `master`, but do not import Google Form submissions directly into `master`.
+
+The intended branch flow is:
+
+1. The workflow is triggered from GitHub Actions.
+2. The workflow checks out `website-data-pipeline`.
+3. The importer reads the Google Sheet and regenerates CSV, Markdown, and generated pages.
+4. The workflow opens a PR from `website-activity/google-sheet-import` into `website-data-pipeline`.
+5. The maintainer reviews the generated files and merges into `website-data-pipeline`.
+6. The maintainer verifies the staging branch locally or on GitHub.
+7. When the update is ready for publication, open a separate PR from `website-data-pipeline` into `master`.
+8. Merging that PR publishes the update through GitHub Pages.
+
+Do not cherry-pick only an individual generated page into `master`. Keep `member_activity_records.csv`, derived TSV files, generated Markdown, and generated pages synchronized in the same publication PR.
 
 ## Routine operation
 
@@ -50,8 +68,9 @@ The workflow uses Google Drive read-only scope and creates a PR; it does not pus
 4. The workflow downloads the response sheet as CSV.
 5. `markdown_generator/import_activity_sheet.py` imports new rows into `markdown_generator/member_activity_records.csv`.
 6. `markdown_generator/generate_site_content.py --check --generate-site` regenerates website files.
-7. The workflow opens a PR.
+7. The workflow opens a PR into `website-data-pipeline`.
 8. Maintainer reviews and merges the PR.
+9. Maintainer opens a separate PR from `website-data-pipeline` into `master` only when the staged website is ready to publish.
 
 ## Images
 

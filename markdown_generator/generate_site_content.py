@@ -781,6 +781,7 @@ redirect_from:
 ---
 """
     visible = [row for row in applications if row.get("visibility", "public") == "public"]
+    visible = sorted(visible, key=lambda row: row.get("date") or row.get("year"), reverse=True)
     return header + "\n" + "\n\n".join(render_linked_item_block(row, "h4") for row in visible).rstrip() + "\n"
 
 
@@ -797,6 +798,7 @@ redirect_from:
 <h4>An overview of our (international) projects and collaborations</h4>
 """
     visible = [row for row in projects if row.get("visibility", "public") == "public"]
+    visible = sorted(visible, key=lambda row: row.get("date") or row.get("year"), reverse=True)
     return header + "\n" + "\n\n".join(render_linked_item_block(row, "h2") for row in visible).rstrip() + "\n"
 def render_award_block(row: dict[str, str]) -> str:
     title = row.get("title", "").strip()
