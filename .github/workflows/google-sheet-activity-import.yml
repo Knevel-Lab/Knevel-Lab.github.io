@@ -37,6 +37,7 @@ jobs:
         with:
           credentials_json: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
           token_format: access_token
+          create_credentials_file: false
           access_token_scopes: https://www.googleapis.com/auth/drive.readonly
 
       - name: Download Google Sheet CSV
@@ -67,6 +68,8 @@ jobs:
           fi
           python markdown_generator/generate_site_content.py --check --generate-site
 
+      - name: Remove transient Google auth credential files
+        run: rm -f gha-creds-*.json
       - name: Create pull request
         uses: peter-evans/create-pull-request@v6
         with:
