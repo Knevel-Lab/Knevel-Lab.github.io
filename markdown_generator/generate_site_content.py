@@ -98,6 +98,21 @@ def slugify(value: str) -> str:
     return value or "record"
 
 
+def limited_record_stem(prefix: str, slug: str, max_stem_length: int = 120) -> str:
+    prefix = (prefix or "undated").replace("/", "-")
+    stem_prefix = f"{prefix}-"
+    available = max_stem_length - len(stem_prefix)
+    if available < 40:
+        available = 40
+    if len(slug) > available:
+        slug = slug[:available].rstrip("-")
+    return f"{stem_prefix}{slug}"
+
+
+def limited_markdown_filename(prefix: str, slug: str, max_stem_length: int = 120) -> str:
+    return f"{limited_record_stem(prefix, slug, max_stem_length=max_stem_length)}.md"
+
+
 def strip_wrapping_quotes(value: str) -> str:
     value = value.strip()
     if len(value) >= 2 and value[0] == value[-1] and value[0] in {"'", '"'}:
@@ -598,8 +613,9 @@ def validate(rows: list[dict[str, str]]) -> list[str]:
 def generate_publication_md(row: dict[str, str]) -> tuple[str, str]:
     date_part = row.get("date_display") or row.get("date") or row.get("year") or "undated"
     slug = slugify(row.get("permalink") or row["title"])
-    filename = f"{date_part}-{slug}.md".replace("/", "-")
-    permalink = row.get("permalink") or f"/publication/{filename[:-3]}"
+    stem = limited_record_stem(date_part, slug)
+    permalink = row.get("permalink") or f"/publication/{stem}"
+    filename = f"{stem}.md"
     fm = {
         "title": row["title"],
         "collection": "publications",
@@ -640,8 +656,9 @@ def display_activity_type(row: dict[str, str]) -> str:
 def generate_talk_md(row: dict[str, str]) -> tuple[str, str]:
     date = row.get("date") or row.get("year") or "undated"
     slug = slugify(row.get("permalink") or row["title"])
-    filename = f"{date}-{slug}.md".replace("/", "-")
-    permalink = row.get("permalink") or f"/talks/{filename[:-3]}"
+    stem = limited_record_stem(date, slug)
+    permalink = row.get("permalink") or f"/talks/{stem}"
+    filename = f"{stem}.md"
     fm = {
         "title": row["title"],
         "collection": "talks",

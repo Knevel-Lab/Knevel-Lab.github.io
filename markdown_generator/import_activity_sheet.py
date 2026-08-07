@@ -320,7 +320,8 @@ def pubmed_lookup(pubmed_id: str = "", doi: str = "") -> dict[str, str]:
     article = root.find(".//PubmedArticle")
     if article is None:
         raise ValueError(f"No PubMed article found for PMID {pubmed_id}.")
-    title = " ".join("".join(article.findtext(".//ArticleTitle", default="").splitlines()).split())
+    title_node = article.find(".//ArticleTitle")
+    title = " ".join("".join(title_node.itertext()).split()) if title_node is not None else ""
     journal = article.findtext(".//Journal/ISOAbbreviation") or article.findtext(".//Journal/Title") or ""
     year = article.findtext(".//JournalIssue/PubDate/Year") or ""
     month = article.findtext(".//JournalIssue/PubDate/Month") or ""
