@@ -37,7 +37,7 @@ jobs:
         with:
           credentials_json: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
           token_format: access_token
-          scopes: https://www.googleapis.com/auth/drive.readonly
+          access_token_scopes: https://www.googleapis.com/auth/drive.readonly
 
       - name: Download Google Sheet CSV
         env:
