@@ -596,6 +596,22 @@ def generate_publication_md(row: dict[str, str]) -> tuple[str, str]:
     return filename, frontmatter_block(fm) + body
 
 
+def display_activity_type(row: dict[str, str]) -> str:
+    explicit_role = (row.get("role") or "").strip()
+    if explicit_role:
+        return explicit_role
+    labels = {
+        "talk": "Talk",
+        "invited_presentation": "Invited presentation",
+        "public_outreach": "Public outreach",
+    }
+    label = labels.get(row.get("record_type", ""), row.get("record_type", "").replace("_", " ").title())
+    member_names = (row.get("member_names") or "").replace(";", ", ").strip()
+    if member_names and member_names != "Knevel Lab":
+        return f"{label} by {member_names}"
+    return label
+
+
 def generate_talk_md(row: dict[str, str]) -> tuple[str, str]:
     date = row.get("date") or row.get("year") or "undated"
     slug = slugify(row.get("permalink") or row["title"])
@@ -604,7 +620,7 @@ def generate_talk_md(row: dict[str, str]) -> tuple[str, str]:
     fm = {
         "title": row["title"],
         "collection": "talks",
-        "type": row.get("role", "") or row.get("record_type", ""),
+        "type": display_activity_type(row),
         "permalink": permalink,
         "venue": row.get("venue", ""),
         "date": date,

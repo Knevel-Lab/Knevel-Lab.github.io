@@ -26,3 +26,4 @@ vendor/
 __pycache__/
 markdown_generator/__pycache__/
 markdown_generator/form_backups/
+python-static-server*.log
