@@ -1,0 +1,83 @@
+name: Import Google Sheet website activities
+
+on:
+  workflow_dispatch:
+    inputs:
+      download_images:
+        description: "Download Google Drive image uploads into images/. Requires GOOGLE_SERVICE_ACCOUNT_JSON."
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: google-sheet-activity-import
+  cancel-in-progress: false
+
+jobs:
+  import-google-sheet:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout website-data-pipeline
+        uses: actions/checkout@v4
+        with:
+          ref: website-data-pipeline
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Authenticate to Google
+        id: google-auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+          token_format: access_token
+          scopes: https://www.googleapis.com/auth/drive.readonly
+
+      - name: Download Google Sheet CSV
+        env:
+          GOOGLE_SHEET_ID: ${{ vars.GOOGLE_SHEET_ID }}
+          GOOGLE_ACCESS_TOKEN: ${{ steps.google-auth.outputs.access_token }}
+        run: |
+          set -euo pipefail
+          mkdir -p .tmp
+          if [ -z "${GOOGLE_SHEET_ID}" ]; then
+            echo "Repository variable GOOGLE_SHEET_ID is required." >&2
+            exit 1
+          fi
+          curl -L --fail --show-error \
+            -H "Authorization: Bearer ${GOOGLE_ACCESS_TOKEN}" \
+            "https://www.googleapis.com/drive/v3/files/${GOOGLE_SHEET_ID}/export?mimeType=text/csv" \
+            -o .tmp/google_sheet_activity.csv
+
+      - name: Import sheet rows and generate website files
+        env:
+          GOOGLE_ACCESS_TOKEN: ${{ steps.google-auth.outputs.access_token }}
+        run: |
+          set -euo pipefail
+          if [ "${{ inputs.download_images }}" = "true" ]; then
+            python markdown_generator/import_activity_sheet.py --sheet-csv .tmp/google_sheet_activity.csv --download-images
+          else
+            python markdown_generator/import_activity_sheet.py --sheet-csv .tmp/google_sheet_activity.csv
+          fi
+          python markdown_generator/generate_site_content.py --check --generate-site
+
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: Import Google Sheet website activities
+          title: Import Google Sheet website activities
+          body: |
+            This PR imports lab-member activity submissions from the configured Google Sheet.
+
+            Source branch: `website-data-pipeline`
+
+            Please review generated CSV, images, and website files before merging.
+          branch: website-activity/google-sheet-import
+          delete-branch: true
+          labels: website-activity
