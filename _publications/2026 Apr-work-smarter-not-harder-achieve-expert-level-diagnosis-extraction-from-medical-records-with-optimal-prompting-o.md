@@ -1,7 +1,7 @@
 ---
 title: "Work smarter, not harder: achieve expert-level diagnosis extraction from medical records with optimal prompting of large language models."
 collection: publications
-permalink: "/publication/2026 Apr-work-smarter-not-harder-achieve-expert-level-diagnosis-extraction-from-medical-records-with-optimal-prompting-of-large-language-models"
+permalink: "/publication/2026 Apr-work-smarter-not-harder-achieve-expert-level-diagnosis-extraction-from-medical-records-with-optimal-prompting-o"
 date: 2026-04-01
 date_display: "2026 Apr"
 venue: "Ann Rheum Dis"
