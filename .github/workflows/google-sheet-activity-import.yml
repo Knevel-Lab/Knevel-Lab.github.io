@@ -12,6 +12,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  id-token: write
 
 concurrency:
   group: google-sheet-activity-import
@@ -35,7 +36,8 @@ jobs:
         id: google-auth
         uses: google-github-actions/auth@v2
         with:
-          credentials_json: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+          workload_identity_provider: ${{ vars.GOOGLE_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GOOGLE_SERVICE_ACCOUNT }}
           token_format: access_token
           create_credentials_file: false
           access_token_scopes: https://www.googleapis.com/auth/drive.readonly
